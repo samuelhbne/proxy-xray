@@ -1,0 +1,6 @@
+# Ignore all
+**
+
+# Allow only docker duild files
+!Dockerfile.*
+!*.sh

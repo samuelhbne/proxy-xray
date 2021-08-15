@@ -1,0 +1,41 @@
+FROM arm32v6/golang:1.16-alpine as builder
+
+ARG XRAYVER='v1.4.2'
+
+RUN apk add --no-cache bash git build-base
+
+WORKDIR /go/src/XTLS/Xray-core
+RUN git clone https://github.com/XTLS/Xray-core.git . && \
+    git checkout ${XRAYVER} && \
+    go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
+
+
+FROM arm32v6/alpine:3.14
+
+COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
+
+RUN apk update && apk add bash openssl curl jq moreutils \
+    bind-tools whois dnscrypt-proxy ca-certificates proxychains-ng npm
+RUN npm config set unsafe-perm true
+RUN npm install -g qrcode-terminal
+
+ENV DNSPORT="53"
+
+RUN sed -i "s/^listen_addresses = .*/listen_addresses = \[\'0.0.0.0:$DNSPORT\'\]/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+RUN sed -i "s/^dnscrypt_servers = .*/dnscrypt_servers = false/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+RUN sed -i "s/^doh_servers = .*/doh_servers = true/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
+
+ADD run.sh /run.sh
+ADD proxy-ltx.sh  /proxy-ltx.sh
+ADD proxy-ltt.sh  /proxy-ltt.sh
+ADD proxy-lttw.sh /proxy-lttw.sh
+ADD proxy-mtt.sh  /proxy-mtt.sh
+ADD proxy-mttw.sh /proxy-mttw.sh
+ADD proxy-ttt.sh  /proxy-ttt.sh
+ADD proxy-tttw.sh /proxy-tttw.sh
+ADD status.sh     /status.sh
+
+RUN chmod 755 /*.sh
+
+ENTRYPOINT ["/run.sh"]
