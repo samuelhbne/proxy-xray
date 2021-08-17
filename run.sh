@@ -6,27 +6,28 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]"
-    echo "    --ltx  <VLESS-TCP-XTLS option>    uuid@xray-host:port"
-    echo "    --ltt  <VLESS-TCP-TLS option>     uuid@xray-host:port"
-    echo "    --lttw <VLESS-TCP-TLS-WS option>  uuid@xray-host:port:/webpath"
-    echo "    --mtt  <VMESS-TCP-TLS option>     uuid@xray-host:port"
-    echo "    --mttw <VMESS-TCP-TLS-WS option>  uuid@xray-host:port:/webpath"
-    echo "    --ttt  <TROJAN-TCP-TLS option>    password@xray-host:port"
-    echo "    --tttw <TROJAN-TCP-TLS-WS option> password@xray-host:port:/webpath"
-#   echo "    --ssa  <Shadowsocks-AEAD option>  password:method@xray-host:port"
-#   echo "    --sst  <Shadowsocks-TCP option>   password:method@xray-host:port"
-    echo "    --stdin                           Read XRay config from stdin instead of auto generation"
+    echo "    --ltx  <VLESS-TCP-XTLS option>        uuid@xray-host:port"
+    echo "    --ltt  <VLESS-TCP-TLS option>         uuid@xray-host:port"
+    echo "    --lttw <VLESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath"
+    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@xray-host:port:/svcpath"
+    echo "    --mtt  <VMESS-TCP-TLS option>         uuid@xray-host:port"
+    echo "    --mttw <VMESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath"
+    echo "    --ttt  <TROJAN-TCP-TLS option>        password@xray-host:port"
+    echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@xray-host:port:/webpath"
+#   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@xray-host:port"
+#   echo "    --sst  <Shadowsocks-TCP option>       password:method@xray-host:port"
+    echo "    --stdin                               Read XRay config from stdin instead of auto generation"
 }
 
-TEMP=`getopt -o d --long ltx:,ltt:,lttw:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o d --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:stdin,debug -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
 while true ; do
     case "$1" in
-        --ltx|--ltt|--lttw|--mtt|--mttw|--ttt|--tttw|--ssa|--sst)
+        --ltx|--ltt|--lttw|--lttg|--mtt|--mttw|--ttt|--tttw|--ssa|--sst)
             subcmd=`echo "$1"|tr -d "\-\-"`
-            echo "$DIR/proxy-${subcmd}.sh $2 >$XCONF"
+            echo "${DIR}proxy-${subcmd}.sh $2 >$XCONF"
             $DIR/proxy-${subcmd}.sh $2 >$XCONF
             if [ $? != 0 ]; then
                 echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
@@ -55,8 +56,6 @@ while true ; do
     esac
 done
 
-/usr/bin/dnscrypt-proxy -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml &
-
 if [ "${STDINCONF}" = "1" ]; then
     exec /usr/local/bin/xray
 else
@@ -67,6 +66,7 @@ else
             cat $XCONF
             echo
         fi
+        /usr/bin/dnscrypt-proxy -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml &
         exec /usr/local/bin/xray -c $XCONF
     else
         usage

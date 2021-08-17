@@ -23,6 +23,7 @@ case "${PROTOCOL}" in
         XHOST=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].address'`
         XPORT=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].port'`
         WPATH=`cat $XCONF | jq -r '.outbounds[0].streamSettings.wsSettings.path'`
+        SVCNAME=`cat $XCONF | jq -r '.outbounds[0].streamSettings.grpcSettings.serviceName'`
         UUID=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].id'`
         XENCRYPT=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].encryption'`
         XSEC=`cat $XCONF | jq -r '.outbounds[0].streamSettings.security'`
@@ -31,6 +32,7 @@ case "${PROTOCOL}" in
         XURL="${PROTOCOL}://${UUID}@${XHOST}:${XPORT}?security=${XSEC}&type=${XNETWORK}"
         if [ "${XFLOW}" != "null" ]; then XURL="${XURL}&flow=${XFLOW}"; fi
         if [ "${WPATH}" != "null" ]; then XURL="${XURL}&path=$(urlencode ${WPATH})"; fi
+        if [ "${SVCNAME}" != "null" ]; then XURL="${XURL}&serviceName=${SVCNAME}&mode=gun"; fi
         XURL="${XURL}#${XHOST}:${XPORT}"
         ;;
     vmess)
