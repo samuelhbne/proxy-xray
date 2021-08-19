@@ -6,16 +6,16 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]"
-    echo "    --ltx  <VLESS-TCP-XTLS option>        uuid@xray-host:port"
-    echo "    --ltt  <VLESS-TCP-TLS option>         uuid@xray-host:port"
-    echo "    --lttw <VLESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath"
-    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@xray-host:port:/svcpath"
-    echo "    --mtt  <VMESS-TCP-TLS option>         uuid@xray-host:port"
-    echo "    --mttw <VMESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath"
-    echo "    --ttt  <TROJAN-TCP-TLS option>        password@xray-host:port"
-    echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@xray-host:port:/webpath"
-#   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@xray-host:port"
-#   echo "    --sst  <Shadowsocks-TCP option>       password:method@xray-host:port"
+    echo "    --ltx  <VLESS-TCP-XTLS option>        uuid@host:port"
+    echo "    --ltt  <VLESS-TCP-TLS option>         uuid@host:port"
+    echo "    --lttw <VLESS-TCP-TLS-WS option>      uuid@host:port:/webpath"
+    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@host:port:/svcpath"
+    echo "    --mtt  <VMESS-TCP-TLS option>         uuid@host:port"
+    echo "    --mttw <VMESS-TCP-TLS-WS option>      uuid@host:port:/webpath"
+    echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port"
+    echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath"
+#   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"
+#   echo "    --sst  <Shadowsocks-TCP option>       password:method@host:port"
     echo "    --stdin                               Read XRay config from stdin instead of auto generation"
 }
 
@@ -65,11 +65,13 @@ else
             echo
             cat $XCONF
             echo
+        else
+            /usr/bin/dnscrypt-proxy -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml &
         fi
-        /usr/bin/dnscrypt-proxy -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml &
-        exec /usr/local/bin/xray -c $XCONF
     else
         usage
         exit 1
     fi
 fi
+
+exec /usr/local/bin/xray -c $XCONF
