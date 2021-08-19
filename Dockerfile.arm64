@@ -26,16 +26,16 @@ RUN sed -i "s/^dnscrypt_servers = .*/dnscrypt_servers = false/g" /etc/dnscrypt-p
 RUN sed -i "s/^doh_servers = .*/doh_servers = true/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
-ADD run.sh /run.sh
-ADD proxy-ltx.sh  /proxy-ltx.sh
-ADD proxy-ltt.sh  /proxy-ltt.sh
-ADD proxy-lttw.sh /proxy-lttw.sh
-ADD proxy-lttg.sh /proxy-lttg.sh
-ADD proxy-mtt.sh  /proxy-mtt.sh
-ADD proxy-mttw.sh /proxy-mttw.sh
-ADD proxy-ttt.sh  /proxy-ttt.sh
-ADD proxy-tttw.sh /proxy-tttw.sh
-ADD status.sh     /status.sh
+ADD proxy-ltx.sh    /proxy-ltx.sh
+ADD proxy-ltt.sh    /proxy-ltt.sh
+ADD proxy-lttw.sh   /proxy-lttw.sh
+ADD proxy-lttg.sh   /proxy-lttg.sh
+ADD proxy-mtt.sh    /proxy-mtt.sh
+ADD proxy-mttw.sh   /proxy-mttw.sh
+ADD proxy-ttt.sh    /proxy-ttt.sh
+ADD proxy-tttw.sh   /proxy-tttw.sh
+ADD status.sh       /status.sh
+ADD run.sh          /run.sh
 
 RUN chmod 755 /*.sh
 
