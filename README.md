@@ -22,14 +22,14 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 ```shell
 $ docker run --rm -it samuelhbne/proxy-xray:amd64
 proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
-    --ltx  <VLESS-TCP-XTLS option>        uuid@xray-host:port
-    --ltt  <VLESS-TCP-TLS option>         uuid@xray-host:port
-    --lttw <VLESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath
-    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@xray-host:port:/svcpath
-    --mtt  <VMESS-TCP-TLS option>         uuid@xray-host:port
-    --mttw <VMESS-TCP-TLS-WS option>      uuid@xray-host:port:/webpath
-    --ttt  <TROJAN-TCP-TLS option>        password@xray-host:port
-    --tttw <TROJAN-TCP-TLS-WS option>     password@xray-host:port:/webpath
+    --ltx  <VLESS-TCP-XTLS option>        uuid@host:port
+    --ltt  <VLESS-TCP-TLS option>         uuid@host:port
+    --lttw <VLESS-TCP-TLS-WS option>      uuid@host:port:/webpath
+    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@host:port:/svcpath
+    --mtt  <VMESS-TCP-TLS option>         uuid@host:port
+    --mttw <VMESS-TCP-TLS-WS option>      uuid@host:port:/webpath
+    --ttt  <TROJAN-TCP-TLS option>        password@host:port
+    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath
     --stdin                               Read XRay config from stdin instead of auto generation
 
 $ docker run --name proxy-xray -p 21080:1080 -p 65353:53/udp -p 28123:8123 -d samuelhbne/proxy-xray:amd64 --ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
