@@ -70,6 +70,8 @@ else
         fi
     else
         usage
+        echo "Missing xray option"
+        echo "Abort"
         exit 1
     fi
 fi
