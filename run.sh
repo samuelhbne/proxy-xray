@@ -27,7 +27,6 @@ while true ; do
     case "$1" in
         --ltx|--ltt|--lttw|--lttg|--mtt|--mttw|--ttt|--tttw|--ssa|--sst)
             subcmd=`echo "$1"|tr -d "\-\-"`
-            echo "${DIR}proxy-${subcmd}.sh $2 >$XCONF"
             $DIR/proxy-${subcmd}.sh $2 >$XCONF
             if [ $? != 0 ]; then
                 echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
