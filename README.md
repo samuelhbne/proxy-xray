@@ -15,7 +15,7 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 
 ### NOTE1
 
-- Please replace Dockerfile.amd64 with the Dockerfile.ARCH match your server accordingly. For example: Dockerfile.arm for 32bit Raspbian, Dockerfile.arm64 for 64bit Ubuntu for Raspberry Pi.
+- Please replace Dockerfile.amd64 with the Dockerfile.ARCH match your server accordingly. For example: Dockerfile.arm for 32bit Raspbian, Dockerfile.arm64 for 64bit Ubuntu on Raspberry Pi.
 
 ## How to start proxy-xray container
 
@@ -33,25 +33,25 @@ proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
     -d|--debug                            Start in debug mode with DNS server disabled
     --stdin                               Read XRay config from stdin instead of auto generation
 
-$ docker run --name proxy-xray -p 21080:1080 -p 65353:53/udp -p 28123:8123 -d samuelhbne/proxy-xray --ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
+$ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray --ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
 ...
 ```
 
 ### NOTE2
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
-- Please replace 21080 (-p 21080:1080) with the port number you set for SOCKS5 proxy TCP listerning.
-- Please replace 28123 (-p 28123:8123) with the port number you set for HTTP proxy TCP listerning.
+- Please replace 1080 (-p 1080:2080) with the port number you set for SOCKS5 proxy TCP listerning.
+- Please replace 8123 (-p 8123:8223) with the port number you set for HTTP proxy TCP listerning.
 - Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
 - Please replace "bec24d96-410f-4723-8b3b-46987a1d9ed8" with the uuid you set for Xray server access.
 
 ## How to verify if proxy tunnel is working properly
 
 ```shell
-$ curl -sSx socks5h://127.0.0.1:21080 http://ifconfig.co
+$ curl -sSx socks5h://127.0.0.1:1080 http://ifconfig.co
 12.34.56.78
 
-$ curl -sSx http://127.0.0.1:28123 http://ifconfig.co
+$ curl -sSx http://127.0.0.1:8123 http://ifconfig.co
 12.34.56.78
 
 $ dig +short @127.0.0.1 -p 65353 twitter.com
@@ -100,7 +100,7 @@ $ docker rm proxy-xray
 The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given uuid.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --ltx \
+$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
 bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
 ```
 
