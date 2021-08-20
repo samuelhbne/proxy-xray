@@ -16,6 +16,7 @@ usage() {
     echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath"
 #   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"
 #   echo "    --sst  <Shadowsocks-TCP option>       password:method@host:port"
+    echo "    -d|--debug                            Start in debug mode with DNS server disabled"
     echo "    --stdin                               Read XRay config from stdin instead of auto generation"
 }
 
