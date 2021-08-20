@@ -33,7 +33,8 @@ proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
     -d|--debug                            Start in debug mode with DNS server disabled
     --stdin                               Read XRay config from stdin instead of auto generation
 
-$ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray --ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
+$ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray \
+--ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
 ...
 ```
 
