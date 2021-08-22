@@ -34,7 +34,7 @@ proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
     --stdin                               Read XRay config from stdin instead of auto generation
 
 $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray \
---ltx bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
+--ltx myid@mydomain.duckdns.org:443
 ...
 ```
 
@@ -44,7 +44,7 @@ $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samu
 - Please replace 1080 (-p 1080:2080) with the port number you set for SOCKS5 proxy TCP listerning.
 - Please replace 8123 (-p 8123:8223) with the port number you set for HTTP proxy TCP listerning.
 - Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
-- Please replace "bec24d96-410f-4723-8b3b-46987a1d9ed8" with the uuid you set for Xray server access.
+- Please replace "myid" with the uuid you set for Xray server access.
 
 ## How to verify if proxy tunnel is working properly
 
@@ -80,7 +80,7 @@ OrgId:          TWITT
 ```shell
 $ docker exec -it proxy-xray /status.sh
 VPS-Server: mydomain.duckdns.org
-Xray-URL: vless://bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
+Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
 ```
 
 ![QR code example](https://github.com/samuelhbne/proxy-xray/blob/master/images/qr-xray.png)
@@ -102,7 +102,7 @@ The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
-bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443
+myid@mydomain.duckdns.org:443
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
@@ -111,7 +111,7 @@ The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Webso
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
-bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443:/websocket
+myid@mydomain.duckdns.org:443:/websocket
 ```
 
 ### 3. Connect to Vless+TCP+TLS+gRPC server in debug mode for diagnosis
@@ -120,7 +120,7 @@ The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC 
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -it samuelhbne/proxy-xray --lttg \
-bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443:/gsvc
+myid@mydomain.duckdns.org:443:/gsvc
 ```
 
 ### 4. Connect to TCP+TLS+Trojan in server
@@ -138,5 +138,5 @@ The following instruction start proxy-trojan in debug mode. Output Xray config f
 
 ```shell
 $ docker run --rm -p 1080:1080 -it samuelhbne/proxy-xray --mttw \
-bec24d96-410f-4723-8b3b-46987a1d9ed8@mydomain.duckdns.org:443:/websocket --debug
+myid@mydomain.duckdns.org:443:/websocket --debug
 ```
