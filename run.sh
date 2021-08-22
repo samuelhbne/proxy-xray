@@ -6,12 +6,12 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]"
-    echo "    --ltx  <VLESS-TCP-XTLS option>        uuid@host:port"
-    echo "    --ltt  <VLESS-TCP-TLS option>         uuid@host:port"
-    echo "    --lttw <VLESS-TCP-TLS-WS option>      uuid@host:port:/webpath"
-    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@host:port:/svcpath"
-    echo "    --mtt  <VMESS-TCP-TLS option>         uuid@host:port"
-    echo "    --mttw <VMESS-TCP-TLS-WS option>      uuid@host:port:/webpath"
+    echo "    --ltx  <VLESS-TCP-XTLS option>        id@host:port"
+    echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port"
+    echo "    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath"
+    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:/svcpath"
+    echo "    --mtt  <VMESS-TCP-TLS option>         id@host:port"
+    echo "    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath"
     echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port"
     echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath"
 #   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"

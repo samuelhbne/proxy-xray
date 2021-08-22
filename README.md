@@ -22,12 +22,12 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 ```shell
 $ docker run --rm -it samuelhbne/proxy-xray:amd64
 proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
-    --ltx  <VLESS-TCP-XTLS option>        uuid@host:port
-    --ltt  <VLESS-TCP-TLS option>         uuid@host:port
-    --lttw <VLESS-TCP-TLS-WS option>      uuid@host:port:/webpath
-    --lttg <VLESS-TCP-TLS-GRPC option>    uuid@host:port:/svcpath
-    --mtt  <VMESS-TCP-TLS option>         uuid@host:port
-    --mttw <VMESS-TCP-TLS-WS option>      uuid@host:port:/webpath
+    --ltx  <VLESS-TCP-XTLS option>        id@host:port
+    --ltt  <VLESS-TCP-TLS option>         id@host:port
+    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath
+    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:/svcpath
+    --mtt  <VMESS-TCP-TLS option>         id@host:port
+    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath
     --ttt  <TROJAN-TCP-TLS option>        password@host:port
     --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath
     -d|--debug                            Start in debug mode with DNS server disabled
@@ -44,7 +44,7 @@ $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samu
 - Please replace 1080 (-p 1080:2080) with the port number you set for SOCKS5 proxy TCP listerning.
 - Please replace 8123 (-p 8123:8223) with the port number you set for HTTP proxy TCP listerning.
 - Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
-- Please replace "myid" with the uuid you set for Xray server access.
+- Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
 
 ## How to verify if proxy tunnel is working properly
 
@@ -98,7 +98,7 @@ $ docker rm proxy-xray
 
 ### 1. Connect to Vless+TCP+XTLS server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given uuid.
+The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given id.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
@@ -107,7 +107,7 @@ myid@mydomain.duckdns.org:443
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given uuid.
+The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
@@ -132,11 +132,11 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --ttt \
 trojan_pass@mydomain.duckdns.org:8443
 ```
 
-### 5. Start proxy-trojan in debug mode for diagnosis
+### 5. Start proxy-trojan container in debug mode for for connection issue diagnosis
 
 The following instruction start proxy-trojan in debug mode. Output Xray config file and the log to console for connection diagnosis. dnscrypt-proxy will be disabled to avoid flooding the log output.
 
 ```shell
-$ docker run --rm -p 1080:1080 -it samuelhbne/proxy-xray --mttw \
-myid@mydomain.duckdns.org:443:/websocket --debug
+$ docker run --rm -p 1080:1080 -it samuelhbne/proxy-xray \
+--mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
