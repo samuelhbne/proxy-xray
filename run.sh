@@ -5,19 +5,19 @@ DIR="$(cd $DIR; pwd)"
 XCONF=/tmp/proxy-xray.json
 
 usage() {
-    echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]"
-    echo "    --ltx  <VLESS-TCP-XTLS option>        id@host:port"
-    echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port"
-    echo "    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath"
-    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:/svcpath"
-    echo "    --mtt  <VMESS-TCP-TLS option>         id@host:port"
-    echo "    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath"
-    echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port"
-    echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath"
-#   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"
-#   echo "    --sst  <Shadowsocks-TCP option>       password:method@host:port"
-    echo "    -i|--stdin                            Read XRay config from stdin instead of auto generation"
-    echo "    -d|--debug                            Start Xray in debug mode with verbose output"
+    echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-i|--stdin] [-d|--debug]"
+    echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
+    echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
+    echo "    --ltx  <VLESS-TCP-XTLS option>     id@host:port"
+    echo "    --ltt  <VLESS-TCP-TLS option>      id@host:port"
+    echo "    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath"
+    echo "    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath"
+    echo "    --mtt  <VMESS-TCP-TLS option>      id@host:port"
+    echo "    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath"
+    echo "    --ttt  <TROJAN-TCP-TLS option>     password@host:port"
+    echo "    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath"
+#   echo "    --ssa  <Shadowsocks-AEAD option>   password:method@host:port"
+#   echo "    --sst  <Shadowsocks-TCP option>    password:method@host:port"
 }
 
 TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:stdin,debug -n "$0" -- $@`

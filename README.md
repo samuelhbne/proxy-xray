@@ -21,17 +21,17 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 
 ```shell
 $ docker run --rm -it samuelhbne/proxy-xray:amd64
-proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
-    --ltx  <VLESS-TCP-XTLS option>        id@host:port
-    --ltt  <VLESS-TCP-TLS option>         id@host:port
-    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath
-    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:/svcpath
-    --mtt  <VMESS-TCP-TLS option>         id@host:port
-    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath
-    --ttt  <TROJAN-TCP-TLS option>        password@host:port
-    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath
-    -i|--stdin                            Read XRay config from stdin instead of auto generation
-    -d|--debug                            Start Xray in debug mode with verbose output
+proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-i|--stdin] [-d|--debug]
+    -i|--stdin                         [Optional] Read config from stdin instead of auto generation
+    -d|--debug                         [Optional] Start in debug mode with verbose output
+    --ltx  <VLESS-TCP-XTLS option>     id@host:port
+    --ltt  <VLESS-TCP-TLS option>      id@host:port
+    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath
+    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath
+    --mtt  <VMESS-TCP-TLS option>      id@host:port
+    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath
+    --ttt  <TROJAN-TCP-TLS option>     password@host:port
+    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
 $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray \
 --ltx myid@mydomain.duckdns.org:443
