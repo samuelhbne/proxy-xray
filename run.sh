@@ -16,11 +16,11 @@ usage() {
     echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath"
 #   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"
 #   echo "    --sst  <Shadowsocks-TCP option>       password:method@host:port"
-    echo "    -d|--debug                            Start in debug mode with DNS server disabled"
-    echo "    --stdin                               Read XRay config from stdin instead of auto generation"
+    echo "    -i|--stdin                            Read XRay config from stdin instead of auto generation"
+    echo "    -d|--debug                            Start Xray in debug mode with verbose output"
 }
 
-TEMP=`getopt -o d --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:stdin,debug -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -37,7 +37,7 @@ while true ; do
             fi
             shift 2
             ;;
-        --stdin)
+        -i|--stdin)
             STDINCONF=1
             shift 1
             ;;

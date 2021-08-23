@@ -30,8 +30,8 @@ proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [options]
     --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath
     --ttt  <TROJAN-TCP-TLS option>        password@host:port
     --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath
-    -d|--debug                            Start in debug mode with DNS server disabled
-    --stdin                               Read XRay config from stdin instead of auto generation
+    -i|--stdin                            Read XRay config from stdin instead of auto generation
+    -d|--debug                            Start Xray in debug mode with verbose output
 
 $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray \
 --ltx myid@mydomain.duckdns.org:443
