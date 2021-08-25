@@ -20,7 +20,7 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 ## How to start proxy-xray container
 
 ```shell
-$ docker run --rm -it samuelhbne/proxy-xray:amd64
+$ docker run --rm samuelhbne/proxy-xray:amd64
 proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-i|--stdin] [-d|--debug]
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     -d|--debug                         [Optional] Start in debug mode with verbose output
@@ -59,7 +59,7 @@ $ dig +short @127.0.0.1 -p 65353 twitter.com
 104.244.42.193
 104.244.42.129
 
-$ docker exec -it proxy-xray proxychains whois 104.244.42.193|grep OrgId
+$ docker exec proxy-xray proxychains whois 104.244.42.193|grep OrgId
 [proxychains] config file found: /etc/proxychains/proxychains.conf
 [proxychains] preloading /usr/lib/libproxychains4.so
 [proxychains] DLL init: proxychains-ng 4.14
@@ -78,7 +78,7 @@ OrgId:          TWITT
 ## How to get the XRay QR code for mobile connection
 
 ```shell
-$ docker exec -it proxy-xray /status.sh
+$ docker exec -t proxy-xray /status.sh
 VPS-Server: mydomain.duckdns.org
 Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
 ```
@@ -119,8 +119,8 @@ myid@mydomain.duckdns.org:443:/websocket
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -it samuelhbne/proxy-xray --lttg \
-myid@mydomain.duckdns.org:443:/gsvc
+$ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray --lttg \
+myid@mydomain.duckdns.org:443:/gsvc --debug
 ```
 
 ### 4. Connect to TCP+TLS+Trojan in server
@@ -137,6 +137,6 @@ trojan_pass@mydomain.duckdns.org:8443
 The following instruction start proxy-trojan in debug mode. Output Xray config file and the log to console for connection diagnosis. dnscrypt-proxy will be disabled to avoid flooding the log output.
 
 ```shell
-$ docker run --rm -p 1080:1080 -it samuelhbne/proxy-xray \
+$ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 --mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
