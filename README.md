@@ -114,16 +114,16 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
 myid@mydomain.duckdns.org:443:/websocket
 ```
 
-### 3. Connect to Vless+TCP+TLS+gRPC server in debug mode for diagnosis
+### 3. Connect to Vless+TCP+TLS+gRPC server
 
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray --lttg \
-myid@mydomain.duckdns.org:443:/gsvc --debug
+myid@mydomain.duckdns.org:443:/gsvc
 ```
 
-### 4. Connect to TCP+TLS+Trojan in server
+### 4. Connect to TCP+TLS+Trojan server
 
 The following instruction connect to Xray server port 443 in TCP+TLS+Trojan mode with given password.
 
@@ -132,9 +132,9 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --ttt \
 trojan_pass@mydomain.duckdns.org:8443
 ```
 
-### 5. Start proxy-trojan container in debug mode for for connection issue diagnosis
+### 5. Start proxy-xray container in debug mode for for connection issue diagnosis
 
-The following instruction start proxy-trojan in debug mode. Output Xray config file and the log to console for connection diagnosis. dnscrypt-proxy will be disabled to avoid flooding the log output.
+The following instruction start proxy-xray in debug mode. Output Xray config file and the log to console for connection diagnosis. dnscrypt-proxy will be disabled to avoid flooding the log output.
 
 ```shell
 $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
