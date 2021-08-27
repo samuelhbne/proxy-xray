@@ -1,6 +1,6 @@
 # proxy-xray
 
-Xray client container with SOCKS5/HTTP/DNS proxy and QR code support. Running on x86 and arm/arm64 (Raspberry Pi).
+[Xray](https://github.com/XTLS/Xray-core) client container with SOCKS5/HTTP/DNS proxy and QR code support. Running on x86 and arm/arm64 (Raspberry Pi).
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 
@@ -15,15 +15,30 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 
 ### NOTE1
 
-- Please replace Dockerfile.amd64 with the Dockerfile.ARCH match your server accordingly. For example: Dockerfile.arm for 32bit Raspbian, Dockerfile.arm64 for 64bit Ubuntu on Raspberry Pi.
+Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
+
+- "arm64" for arm64v8 platforms, Raspberry Pi with Ubuntu-arm64 running, AWS A1, t4g instances etc.
+- "arm" for arm32v7 platforms, most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian running.
+
+### NOTE2
+
+- arm32v6 (Pi1 and Pi-zero) users should build the docker images from source rather than run it directly, due to the known issue from upstream Alpine image. WIP.
+- arm32v5 platforms are not supported yet.
 
 ## How to start proxy-xray container
 
 ```shell
-$ docker run --rm samuelhbne/proxy-xray:amd64
-proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-i|--stdin] [-d|--debug]
+$ docker run --rm samuelhbne/proxy-xray
+proxy-xray <connection-options>
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     -d|--debug                         [Optional] Start in debug mode with verbose output
+    --ignore-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
+    --ignore-domain <domain-rule>      [Optional] Add a non-proxy routing rule for domain, like sina.cn or geosite:geosite:geolocation-cn
+    --ignore-ip     <ip-rule>          [Optional] Add a non-proxy routing rule for ip, like 1.1.1.1/32 or geoip:cn
+    --proxy-domain  <domain-rule>      [Optional] Add a proxy routing rule for domain, like twitter.com or geosite:google-cn
+    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like geoip:netflix
+    --block-domain  <domain-rule>      [Optional] Add a block routing rule for domain, like geosite:category-ads-all
+    --block-ip      <ip-rule>          [Optional] Add a block routing rule for ip, like geoip:private
     --ltx  <VLESS-TCP-XTLS option>     id@host:port
     --ltt  <VLESS-TCP-TLS option>      id@host:port
     --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath
@@ -33,12 +48,12 @@ proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-
     --ttt  <TROJAN-TCP-TLS option>     password@host:port
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
-$ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samuelhbne/proxy-xray \
---ltx myid@mydomain.duckdns.org:443
+$ docker run --name proxy-xray -p 1080:2080 -p 8123:8223 -p 65353:53/udp -d samuelhbne/proxy-xray \
+--ltx myid@mydomain.duckdns.org:443 --ignore-china
 ...
 ```
 
-### NOTE2
+### NOTE3
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
 - Please replace 1080 (-p 1080:2080) with the port number you set for SOCKS5 proxy TCP listerning.
@@ -49,10 +64,10 @@ $ docker run --name proxy-xray -p 1080:2080 -p 65353:53/udp -p 8123:8223 -d samu
 ## How to verify if proxy tunnel is working properly
 
 ```shell
-$ curl -sSx socks5h://127.0.0.1:1080 http://ifconfig.co
+$ curl -sSx socks5h://127.0.0.1:1080 https://ifconfig.co
 12.34.56.78
 
-$ curl -sSx http://127.0.0.1:8123 http://ifconfig.co
+$ curl -sSx http://127.0.0.1:8123 https://checkip.amazonaws.com/
 12.34.56.78
 
 $ dig +short @127.0.0.1 -p 65353 twitter.com
@@ -67,7 +82,7 @@ $ docker exec proxy-xray proxychains whois 104.244.42.193|grep OrgId
 OrgId:          TWITT
 ```
 
-### NOTE3
+### NOTE4
 
 - curl should return the VPN server address given above if SOCKS5/HTTP proxy works properly.
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
@@ -98,20 +113,21 @@ $ docker rm proxy-xray
 
 ### 1. Connect to Vless+TCP+XTLS server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given id.
+The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given id. All sites and IP from China will not been proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
-myid@mydomain.duckdns.org:443
+myid@mydomain.duckdns.org:443 --ignore-china
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id.
+The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will been proxied. All sites located in China will not be proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
-myid@mydomain.duckdns.org:443:/websocket
+myid@mydomain.duckdns.org:443:/websocket \
+--proxy-domain geosite:apple-vn --ignore-domain geosite:geolocation-cn
 ```
 
 ### 3. Connect to Vless+TCP+TLS+gRPC server
@@ -134,9 +150,17 @@ trojan_pass@mydomain.duckdns.org:8443
 
 ### 5. Start proxy-xray container in debug mode for for connection issue diagnosis
 
-The following instruction start proxy-xray in debug mode. Output Xray config file and the log to console for connection diagnosis. dnscrypt-proxy will be disabled to avoid flooding the log output.
+The following instruction start proxy-xray in debug mode. Output Xray config file generated and the Xray log to console for connection diagnosis.
 
 ```shell
 $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 --mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
+
+## Credits
+
+Thanks to [RPRX](https://github.com/RPRX) for the [Xray](https://github.com/XTLS/Xray-core) project.
+
+Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for the [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project.
+
+Thanks to [felixonmars](https://github.com/felixonmars) for the [dnsmasq-china-list](https://github.com/felixonmars/dnsmasq-china-list) project.

@@ -5,14 +5,16 @@ DIR="$(cd $DIR; pwd)"
 XCONF=/tmp/proxy-xray.json
 
 usage() {
-    echo "proxy-xray --<ltx|ltt|lttw|mtt|mttw|ttt|tttw|ssa|sst|stdin> [connect options] [-i|--stdin] [-d|--debug]"
+    echo "proxy-xray <connection-options>"
     echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
     echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
-    echo "    --ignore-china                     [Optional] Add rules to avoid domain and ip located in China being proxied"
-    echo "    --ignore-domain <domain rule>      [Optional] Add a non-proxy routing rule for domain, like sina.cn or geosite:apple-cn"
-    echo "    --ignore-ip     <ip rule>          [Optional] Add a non-proxy routing rule for ip, like geoip:\!us"
-    echo "    --proxy-domain  <domain rule>      [Optional] Add a proxy routing rule for domain, like geosite:apple-cn"
-    echo "    --proxy-ip      <ip rule>          [Optional] Add a proxy routing rule for ip, like 1.1.1.1/32 or geoip:netflix"
+    echo "    --ignore-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied"
+    echo "    --ignore-domain <domain-rule>      [Optional] Add a non-proxy routing rule for domain, like sina.cn or geosite:geosite:geolocation-cn"
+    echo "    --ignore-ip     <ip-rule>          [Optional] Add a non-proxy routing rule for ip, like 1.1.1.1/32 or geoip:cn"
+    echo "    --proxy-domain  <domain-rule>      [Optional] Add a proxy routing rule for domain, like twitter.com or geosite:google-cn"
+    echo "    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like geoip:netflix"
+    echo "    --block-domain  <domain-rule>      [Optional] Add a block routing rule for domain, like geosite:category-ads-all"
+    echo "    --block-ip      <ip-rule>          [Optional] Add a block routing rule for ip, like geoip:private"
     echo "    --ltx  <VLESS-TCP-XTLS option>     id@host:port"
     echo "    --ltt  <VLESS-TCP-TLS option>      id@host:port"
     echo "    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath"
@@ -28,7 +30,7 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,ignore-domain:,ignore-ip:,ignore-china,proxy-domain:,proxy-ip:,stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,ignore-domain:,ignore-ip:,ignore-china,proxy-domain:,proxy-ip:,block-domain:,block-ip:,stdin,debug -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -46,33 +48,43 @@ while true ; do
             shift 2
             ;;
         --ignore-domain)
-            Jrules=`echo "${Jrules}" | jq --arg igdomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igdomain]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg igndomain "$2" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
             shift 2
             ;;
         --ignore-ip)
-            Jrules=`echo "${Jrules}" | jq --arg igip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$igip]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg ignip "$2" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
             shift 2
             ;;
         --ignore-china)
-            Jrules=`echo "${Jrules}" | jq --arg igdomain "geosite:apple-cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igdomain]}]'`
-            Jrules=`echo "${Jrules}" | jq --arg igdomain "geosite:geolocation-cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igdomain]}]'`
-            Jrules=`echo "${Jrules}" | jq --arg igip "geoip:cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$igip]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:apple-cn" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:geolocation-cn" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg ignip "geoip:cn" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
             IGCHINA=1
             shift 1
             ;;
         --proxy-domain)
-            Jrules=`echo "${Jrules}" | jq --arg pxdomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"proxy", "domain":[$pxdomain]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg pxydomain "$2" \
+            '.rules += [{"type":"field", "outboundTag":"proxy", "domain":[$pxydomain]}]'`
             shift 2
             ;;
         --proxy-ip)
-            Jrules=`echo "${Jrules}" | jq --arg pxip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"proxy", "ip":[$pxip]}]'`
+            Jrules=`echo "${Jrules}" | jq --arg pxyip "$2" \
+            '.rules += [{"type":"field", "outboundTag":"proxy", "ip":[$pxyip]}]'`
+            shift 2
+            ;;
+        --block-domain)
+            Jrules=`echo "${Jrules}" | jq --arg blkdomain "$2" \
+            '.rules += [{"type":"field", "outboundTag":"block", "domain":[$blkdomain]}]'`
+            shift 2
+            ;;
+        --block-ip)
+            Jrules=`echo "${Jrules}" | jq --arg blkip "$2" \
+            '.rules += [{"type":"field", "outboundTag":"block", "ip":[$blkip]}]'`
             shift 2
             ;;
         -i|--stdin)
@@ -120,5 +132,5 @@ if [ "${DEBUG}" = "1" ]; then
     cat $XCONF
 fi
 
-#exec /usr/local/bin/xray -c $XCONF
+exec /usr/local/bin/xray -c $XCONF
 
