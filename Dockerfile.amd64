@@ -14,16 +14,21 @@ FROM alpine:3.14
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
 
+RUN cd /usr/local/bin; curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+RUN cd /usr/local/bin; curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+
 RUN apk update && apk add bash openssl curl jq moreutils \
-    bind-tools whois dnscrypt-proxy ca-certificates proxychains-ng npm
+    bind-tools whois dnsmasq ca-certificates proxychains-ng npm
 RUN npm config set unsafe-perm true
 RUN npm install -g qrcode-terminal
 
+RUN mkdir -p /etc/dnsmasq-china.d
+RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
+RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
+RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+
 ENV DNSPORT="53"
 
-RUN sed -i "s/^listen_addresses = .*/listen_addresses = \[\'0.0.0.0:$DNSPORT\'\]/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
-RUN sed -i "s/^dnscrypt_servers = .*/dnscrypt_servers = false/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
-RUN sed -i "s/^doh_servers = .*/doh_servers = true/g" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
 ADD proxy-ltx.sh    /proxy-ltx.sh

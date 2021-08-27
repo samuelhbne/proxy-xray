@@ -46,14 +46,17 @@ Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser
 JstreamSettings=`echo '{}' | jq --arg host "${host}" --arg path "${path}" \
 '. += {"network":"ws", "security":"tls", "tlsSettings":{"serverName":$host}, "wsSettings":{"path":$path}}' `
 
-Joutbounds=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
+Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
+'. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
+Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
+Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 
-JibSOCKS=`echo '{}' | jq '. +={"port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
-JibHTTP=`echo '{}' | jq '. +={"port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
+JibSOCKS=`echo '{}' | jq '. +={"tag": "socks", "port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
+JibHTTP=`echo '{}' | jq '. +={"tag": "http", "port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
 
-jroot=`echo '{}' | jq --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" --argjson joutbounds "${Joutbounds}" \
-'. += {"log":{"loglevel":"warning"}, "inbounds":[$jibsocks, $jibhttp], "outbounds":[$joutbounds]}' `
+jroot=`echo '{}' | jq --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
+--argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
+'. += {"log":{"loglevel":"warning"}, "inbounds":[$jibsocks, $jibhttp], "outbounds":[$jproxy, $jdirect, $jblocked]}' `
 
 echo "$jroot"
 exit 0
