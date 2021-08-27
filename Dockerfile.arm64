@@ -2,30 +2,36 @@ FROM arm64v8/golang:1.16-alpine as builder
 
 ARG XRAYVER='v1.4.2'
 
-RUN apk add --no-cache bash git build-base
+RUN apk add --no-cache bash git build-base wget
 
 WORKDIR /go/src/XTLS/Xray-core
 RUN git clone https://github.com/XTLS/Xray-core.git . && \
     git checkout ${XRAYVER} && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
+RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+
+RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
+RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
 FROM arm64v8/alpine:3.14
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
+COPY --from=builder /tmp/geosite.dat /usr/local/bin/
+COPY --from=builder /tmp/geoip.dat /usr/local/bin/
 
-RUN cd /usr/local/bin; curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
-RUN cd /usr/local/bin; curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+RUN mkdir -p /etc/dnsmasq-china.d
+
+COPY --from=builder /tmp/apple.china.conf /etc/dnsmasq-china.d/
+COPY --from=builder /tmp/bogus-nxdomain.china.conf /etc/dnsmasq-china.d/
+COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq-china.d/
 
 RUN apk update && apk add bash openssl curl jq moreutils \
     bind-tools whois dnsmasq ca-certificates proxychains-ng npm
 RUN npm config set unsafe-perm true
 RUN npm install -g qrcode-terminal
-
-RUN mkdir -p /etc/dnsmasq-china.d
-RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
-RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
-RUN cd /etc/dnsmasq-china.d; curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
 
 ENV DNSPORT="53"
 
