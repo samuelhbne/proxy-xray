@@ -1,6 +1,6 @@
 # proxy-xray
 
-[Xray](https://github.com/XTLS/Xray-core) client container with SOCKS5/HTTP/DNS proxy and QR code support. Running on x86 and arm/arm64 (Raspberry Pi).
+[Xray](https://github.com/XTLS/Xray-core) client container with SOCKS5/HTTP/DNS proxy and QR code support. Support x86 and arm/arm64 (Raspberry Pi).
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 
@@ -17,8 +17,8 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 
 Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
 
-- "arm64" for arm64v8 platforms, Raspberry Pi with Ubuntu-arm64 running, AWS A1, t4g instances etc.
-- "arm" for arm32v7 platforms, most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian running.
+- "arm64" for arm64v8 platforms, Support Raspberry Pi with Ubuntu-arm64 running, and AWS A1, t4g instances etc.
+- "arm" for arm32v7 platforms, Support most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian running.
 
 ### NOTE2
 
@@ -49,8 +49,8 @@ proxy-xray <connection-options>
     --ttt  <TROJAN-TCP-TLS option>     password@host:port
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
-$ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp -d samuelhbne/proxy-xray \
---ltx myid@mydomain.duckdns.org:443 --china-direct
+$ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
+-d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --china-direct
 ...
 ```
 
@@ -64,7 +64,7 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 
 ### NOTE4
 
-Sites outside China like twitter.com will always be forward to designated DNS like 1.1.1.1 to avoid the contaminated result. Sites inside China like apple.com.cn will be forward to local DNS servers in China to avoid cross region slow access when "--china-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
+Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--china-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
 
 ## How to verify if proxy tunnel is working properly
 
@@ -89,7 +89,7 @@ OrgId:          TWITT
 
 ### NOTE5
 
-- curl should return the VPN server address given above if SOCKS5/HTTP proxy works properly.
+- curl should return the Xray server address given above if SOCKS5/HTTP proxy works properly.
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
 - Whois should return "OrgId: TWITT". That means the IP address returned from dig query belongs to twitter.com indeed, hence untaminated.
 - Whois was actually running inside the proxy container through the proxy tunnel to avoid potential access blocking.
@@ -137,11 +137,11 @@ myid@mydomain.duckdns.org:443:/websocket \
 
 ### 3. Connect to Vless+TCP+TLS+gRPC server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password.
+The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password. All sites not located in China will be proxied. You need to escape '!' character in --domain-proxy parameter to be accepted by shell.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray --lttg \
-myid@mydomain.duckdns.org:443:/gsvc
+myid@mydomain.duckdns.org:443:/gsvc --domain-proxy geosite:geolocation-\!cn
 ```
 
 ### 4. Connect to TCP+TLS+Trojan server
