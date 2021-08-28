@@ -48,7 +48,7 @@ proxy-xray <connection-options>
     --ttt  <TROJAN-TCP-TLS option>     password@host:port
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
-$ docker run --name proxy-xray -p 1080:2080 -p 8123:8223 -p 65353:53/udp -d samuelhbne/proxy-xray \
+$ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp -d samuelhbne/proxy-xray \
 --ltx myid@mydomain.duckdns.org:443 --china-direct
 ...
 ```
@@ -56,18 +56,22 @@ $ docker run --name proxy-xray -p 1080:2080 -p 8123:8223 -p 65353:53/udp -d samu
 ### NOTE3
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
-- Please replace 1080 (-p 1080:2080) with the port number you set for SOCKS5 proxy TCP listerning.
-- Please replace 8123 (-p 8123:8223) with the port number you set for HTTP proxy TCP listerning.
+- Please replace 2080 (-p 2080:1080, -p 2080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
+- Please replace 8223 (-p 8223:8123) with the port number you set for HTTP proxy TCP listerning.
 - Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
 - Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
+
+### NOTE4
+
+Sites inside China like apple.com.cn will be resolved locally to avoid cross region slow access in China when "--china-direct" options applied. Sites outside China like twitter.com will be resolved on designated DNS like 1.1.1.1 to avoid being contaminated.
 
 ## How to verify if proxy tunnel is working properly
 
 ```shell
-$ curl -sSx socks5h://127.0.0.1:1080 https://ifconfig.co
+$ curl -sSx socks5h://127.0.0.1:2080 https://ifconfig.co
 12.34.56.78
 
-$ curl -sSx http://127.0.0.1:8123 https://checkip.amazonaws.com/
+$ curl -sSx http://127.0.0.1:8223 https://checkip.amazonaws.com/
 12.34.56.78
 
 $ dig +short @127.0.0.1 -p 65353 twitter.com
@@ -82,7 +86,7 @@ $ docker exec proxy-xray proxychains whois 104.244.42.193|grep OrgId
 OrgId:          TWITT
 ```
 
-### NOTE4
+### NOTE5
 
 - curl should return the VPN server address given above if SOCKS5/HTTP proxy works properly.
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
@@ -157,7 +161,7 @@ $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 --mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
 
-### NOTE5
+### NOTE6
 
 For more details about routing rules setting up please look into [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project (Chinese).
 
