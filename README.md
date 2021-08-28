@@ -32,11 +32,11 @@ $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     -d|--debug                         [Optional] Start in debug mode with verbose output
-    --ignore-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
-    --ignore-domain <domain-rule>      [Optional] Add a non-proxy routing rule for domain, like sina.cn or geosite:geosite:geolocation-cn
-    --ignore-ip     <ip-rule>          [Optional] Add a non-proxy routing rule for ip, like 1.1.1.1/32 or geoip:cn
+    --direct-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
+    --direct-domain <domain-rule>      [Optional] Add a direct routing rule for domain, likegeosite:geosite:geolocation-cn
+    --direct-ip     <ip-rule>          [Optional] Add a direct routing rule for ip, like geoip:cn
     --proxy-domain  <domain-rule>      [Optional] Add a proxy routing rule for domain, like twitter.com or geosite:google-cn
-    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like geoip:netflix
+    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like 1.1.1.1/32 or geoip:netflix
     --block-domain  <domain-rule>      [Optional] Add a block routing rule for domain, like geosite:category-ads-all
     --block-ip      <ip-rule>          [Optional] Add a block routing rule for ip, like geoip:private
     --ltx  <VLESS-TCP-XTLS option>     id@host:port
