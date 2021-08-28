@@ -8,6 +8,7 @@ usage() {
     echo "proxy-xray <connection-options>"
     echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
     echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
+    echo "    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server ip, 1.1.1.1 will be applied by default"
     echo "    --china-direct                     [Optional] Add routing rules to avoid domain and ip located in China being proxied"
     echo "    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
     echo "    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
@@ -30,7 +31,7 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,china-direct,stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,dns:,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,china-direct,stdin,debug -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
@@ -44,6 +45,10 @@ while true ; do
             else
                 XRAY=1
             fi
+            shift 2
+            ;;
+        --dns)
+            DNS=$2
             shift 2
             ;;
         --china-direct)
@@ -118,8 +123,13 @@ else
 fi
 dnsmasq
 
+if [ -z "${DNS}" ]; then
+    DNS="1.1.1.1"
+fi
+
 # Add inbounds config
-JibDKDEMO=`echo '{}' | jq '. +={"tag": "dns-in", "port":5353, "listen":"0.0.0.0", "protocol":"dokodemo-door", "settings":{"address": "1.1.1.1", "port":53, "network":"tcp,udp"}}' `
+JibDKDEMO=`echo '{}' | jq --arg dns "${DNS}" \
+'. +={"tag": "dns-in", "port":5353, "listen":"0.0.0.0", "protocol":"dokodemo-door", "settings":{"address": $dns, "port":53, "network":"tcp,udp"}}' `
 JibSOCKS=`echo '{}' | jq '. +={"tag": "socks", "port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
 JibHTTP=`echo '{}' | jq '. +={"tag": "http", "port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
 cat $XCONF| jq --argjson jibdkdemo "${JibDKDEMO}" --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
