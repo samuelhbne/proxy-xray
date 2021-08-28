@@ -4,17 +4,18 @@ ARG XRAYVER='v1.4.2'
 
 RUN apk add --no-cache bash git build-base wget
 
-WORKDIR /go/src/XTLS/Xray-core
-RUN git clone https://github.com/XTLS/Xray-core.git . && \
-    git checkout ${XRAYVER} && \
-    go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
-
 RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
+
+WORKDIR /go/src/XTLS/Xray-core
+RUN git clone https://github.com/XTLS/Xray-core.git . && \
+    git checkout ${XRAYVER} && \
+    go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
+
 
 FROM arm32v6/alpine:3.14
 
@@ -33,7 +34,7 @@ RUN apk update && apk add bash openssl curl jq moreutils \
 RUN npm config set unsafe-perm true
 RUN npm install -g qrcode-terminal
 
-RUN echo "server=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
+RUN echo -e "no-resolv\nserver=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
