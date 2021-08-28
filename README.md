@@ -32,13 +32,13 @@ $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     -d|--debug                         [Optional] Start in debug mode with verbose output
-    --direct-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
-    --direct-domain <domain-rule>      [Optional] Add a direct routing rule for domain, likegeosite:geosite:geolocation-cn
-    --direct-ip     <ip-rule>          [Optional] Add a direct routing rule for ip, like geoip:cn
-    --proxy-domain  <domain-rule>      [Optional] Add a proxy routing rule for domain, like twitter.com or geosite:google-cn
-    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like 1.1.1.1/32 or geoip:netflix
-    --block-domain  <domain-rule>      [Optional] Add a block routing rule for domain, like geosite:category-ads-all
-    --block-ip      <ip-rule>          [Optional] Add a block routing rule for ip, like geoip:private
+    --china-direct                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
+    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
+    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
+    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all
+    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
+    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
+    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private
     --ltx  <VLESS-TCP-XTLS option>     id@host:port
     --ltt  <VLESS-TCP-TLS option>      id@host:port
     --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath
@@ -49,7 +49,7 @@ proxy-xray <connection-options>
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
 $ docker run --name proxy-xray -p 1080:2080 -p 8123:8223 -p 65353:53/udp -d samuelhbne/proxy-xray \
---ltx myid@mydomain.duckdns.org:443 --ignore-china
+--ltx myid@mydomain.duckdns.org:443 --china-direct
 ...
 ```
 
@@ -117,17 +117,17 @@ The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
-myid@mydomain.duckdns.org:443 --ignore-china
+myid@mydomain.duckdns.org:443 --china-direct
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will been proxied. All sites located in China will not be proxied.
+The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will be proxied. All sites located in China will not be proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
 myid@mydomain.duckdns.org:443:/websocket \
---proxy-domain geosite:apple-vn --ignore-domain geosite:geolocation-cn
+--domain-proxy geosite:apple-cn --domain-direct geosite:geolocation-cn
 ```
 
 ### 3. Connect to Vless+TCP+TLS+gRPC server
@@ -156,6 +156,10 @@ The following instruction start proxy-xray in debug mode. Output Xray config fil
 $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 --mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
+
+### NOTE5
+
+For more details about routing rules setting up please look into [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project (Chinese).
 
 ## Credits
 
