@@ -112,7 +112,7 @@ if [ "${XRAY}" != "1" ]; then
 fi
 
 if [ "${IGCHINA}" = "1" ]; then
-    cp -a /etc/dnsmasq-china.d/*.conf /etc/dnsmasq.d/
+    cp -a /etc/dnsmasq-china.d/*.china.conf /etc/dnsmasq.d/
 else
     rm -rf /etc/dnsmasq.d/*.china.conf
 fi
