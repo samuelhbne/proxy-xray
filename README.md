@@ -64,7 +64,7 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 
 ### NOTE4
 
-Sites inside China like apple.com.cn will be resolved locally to avoid cross region slow access in China when "--china-direct" options applied. Sites outside China like twitter.com will be resolved on designated DNS like 1.1.1.1 to avoid being contaminated.
+Sites outside China like twitter.com will always be forward to designated DNS like 1.1.1.1 to avoid the contaminated result. Sites inside China like apple.com.cn will be forward to local DNS servers in China to avoid cross region slow access when "--china-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
 
 ## How to verify if proxy tunnel is working properly
 
