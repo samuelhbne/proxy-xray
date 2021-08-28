@@ -8,13 +8,13 @@ usage() {
     echo "proxy-xray <connection-options>"
     echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
     echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
-    echo "    --direct-china                     [Optional] Add routing rules to avoid domain and ip located in China being proxied"
-    echo "    --direct-domain <domain-rule>      [Optional] Add a direct routing rule for domain, likegeosite:geosite:geolocation-cn"
-    echo "    --direct-ip     <ip-rule>          [Optional] Add a direct routing rule for ip, like geoip:cn"
-    echo "    --proxy-domain  <domain-rule>      [Optional] Add a proxy routing rule for domain, like twitter.com or geosite:google-cn"
-    echo "    --proxy-ip      <ip-rule>          [Optional] Add a proxy routing rule for ip, like 1.1.1.1/32 or geoip:netflix"
-    echo "    --block-domain  <domain-rule>      [Optional] Add a block routing rule for domain, like geosite:category-ads-all"
-    echo "    --block-ip      <ip-rule>          [Optional] Add a block routing rule for ip, like geoip:private"
+    echo "    --china-direct                     [Optional] Add routing rules to avoid domain and ip located in China being proxied"
+    echo "    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
+    echo "    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
+    echo "    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all"
+    echo "    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"
+    echo "    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix"
+    echo "    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private"
     echo "    --ltx  <VLESS-TCP-XTLS option>     id@host:port"
     echo "    --ltt  <VLESS-TCP-TLS option>      id@host:port"
     echo "    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath"
@@ -30,9 +30,8 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,direct-domain:,direct-ip:,direct-china,proxy-domain:,proxy-ip:,block-domain:,block-ip:,stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,china-direct,stdin,debug -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
-
 eval set -- "$TEMP"
 while true ; do
     case "$1" in
@@ -47,17 +46,7 @@ while true ; do
             fi
             shift 2
             ;;
-        --direct-domain)
-            Jrules=`echo "${Jrules}" | jq --arg igndomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
-            shift 2
-            ;;
-        --direct-ip)
-            Jrules=`echo "${Jrules}" | jq --arg ignip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
-            shift 2
-            ;;
-        --direct-china)
+        --china-direct)
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:apple-cn" \
             '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:geolocation-cn" \
@@ -67,22 +56,32 @@ while true ; do
             IGCHINA=1
             shift 1
             ;;
-        --proxy-domain)
+        --domain-direct)
+            Jrules=`echo "${Jrules}" | jq --arg igndomain "$2" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            shift 2
+            ;;
+        --domain-proxy)
             Jrules=`echo "${Jrules}" | jq --arg pxydomain "$2" \
             '.rules += [{"type":"field", "outboundTag":"proxy", "domain":[$pxydomain]}]'`
             shift 2
             ;;
-        --proxy-ip)
-            Jrules=`echo "${Jrules}" | jq --arg pxyip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"proxy", "ip":[$pxyip]}]'`
-            shift 2
-            ;;
-        --block-domain)
+        --domain-block)
             Jrules=`echo "${Jrules}" | jq --arg blkdomain "$2" \
             '.rules += [{"type":"field", "outboundTag":"block", "domain":[$blkdomain]}]'`
             shift 2
             ;;
-        --block-ip)
+        --ip-direct)
+            Jrules=`echo "${Jrules}" | jq --arg ignip "$2" \
+            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
+            shift 2
+            ;;
+        --ip-proxy)
+            Jrules=`echo "${Jrules}" | jq --arg pxyip "$2" \
+            '.rules += [{"type":"field", "outboundTag":"proxy", "ip":[$pxyip]}]'`
+            shift 2
+            ;;
+        --ip-block)
             Jrules=`echo "${Jrules}" | jq --arg blkip "$2" \
             '.rules += [{"type":"field", "outboundTag":"block", "ip":[$blkip]}]'`
             shift 2
@@ -119,18 +118,26 @@ else
 fi
 dnsmasq
 
+# Add inbounds config
+JibDKDEMO=`echo '{}' | jq '. +={"tag": "dns-in", "port":5353, "listen":"0.0.0.0", "protocol":"dokodemo-door", "settings":{"address": "1.1.1.1", "port":53, "network":"tcp,udp"}}' `
+JibSOCKS=`echo '{}' | jq '. +={"tag": "socks", "port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
+JibHTTP=`echo '{}' | jq '. +={"tag": "http", "port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
+cat $XCONF| jq --argjson jibdkdemo "${JibDKDEMO}" --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
+'. += {"inbounds":[$jibdkdemo, $jibsocks, $jibhttp]}' | sponge $XCONF
+
+# Add routing config
 Jrouting='{"routing": {"domainStrategy":"AsIs"}}'
 Jrouting=`echo "${Jrouting}" |jq --argjson jrules "${Jrules}" '.routing += $jrules'`
-cat $XCONF| jq --argjson jrouting "${Jrouting}" '. += $jrouting' |sponge $XCONF
+cat $XCONF| jq --argjson jrouting "${Jrouting}" '. += $jrouting' | sponge $XCONF
 
 if [ "${STDINCONF}" = "1" ]; then
     exec /usr/local/bin/xray
 fi
 
 if [ "${DEBUG}" = "1" ]; then
-    cat $XCONF |jq '.log.loglevel |="debug"' |sponge $XCONF
+    cat $XCONF |jq '.log.loglevel |="debug"' | sponge $XCONF
     cat $XCONF
 fi
 
-#exec /usr/local/bin/xray -c $XCONF
+exec /usr/local/bin/xray -c $XCONF
 

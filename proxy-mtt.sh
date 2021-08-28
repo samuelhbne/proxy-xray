@@ -57,13 +57,8 @@ Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjs
 Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
 Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 
-JibDKDEMO=`echo '{}' | jq '. +={"tag": "dns-in", "port":5353, "listen":"0.0.0.0", "protocol":"dokodemo-door", "settings":{"address": "1.1.1.1", "port":53, "network":"tcp,udp"}}' `
-JibSOCKS=`echo '{}' | jq '. +={"tag": "socks", "port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
-JibHTTP=`echo '{}' | jq '. +={"tag": "http", "port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
-
-jroot=`echo '{}' | jq --argjson jibdkdemo "${JibDKDEMO}" --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
---argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
-'. += {"log":{"loglevel":"warning"}, "inbounds":[$jibdkdemo, $jibsocks, $jibhttp], "outbounds":[$jproxy, $jdirect, $jblocked]}' `
+jroot=`echo '{}' | jq --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
+'. += {"log":{"loglevel":"warning"}, "outbounds":[$jproxy, $jdirect, $jblocked]}' `
 
 echo "$jroot"
 exit 0
