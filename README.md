@@ -17,12 +17,12 @@ $ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
 
 Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
 
-- "arm64" for arm64v8 platforms. Support Raspberry Pi with Ubuntu-arm64 as well as AWS A1, t4g instances etc.
-- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian.
+- "arm64" for arm64v8 platforms. Support Raspberry Pi4 as well as AWS A1, t4g instances etc. with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
+- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (Pi2, Pi3, Pi4) with 32bits OS like [Ubuntu armhf](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
 
 ### NOTE2
 
-- arm32v6 (Pi1 and Pi-zero) users should build the docker images from source rather than run it directly, due to the known issue from upstream Alpine image. WIP.
+- [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (AKA Raspbian) users may encounter dnsmasq core dump issue due to the broken docker.io package from Raspbian upstream. Please switch to Ubuntu, Debian to avoid this issue or wait the fix from Raspbian. Although SOCKS/HTTP proxies still work properly.
 - arm32v5 platforms are not supported yet.
 
 ## How to start proxy-xray container
