@@ -9,7 +9,7 @@
 ```shell
 $ git clone https://github.com/samuelhbne/proxy-xray.git
 $ cd proxy-xray
-$ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
+$ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
 ...
 ```
 
@@ -17,8 +17,8 @@ $ docker build -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
 
 Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
 
-- "arm64" for arm64v8 platforms, Support Raspberry Pi with Ubuntu-arm64 running, and AWS A1, t4g instances etc.
-- "arm" for arm32v7 platforms, Support most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian running.
+- "arm64" for arm64v8 platforms. Support Raspberry Pi with Ubuntu-arm64 as well as AWS A1, t4g instances etc.
+- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (except Pi1 and Pi-zero) with Raspbian.
 
 ### NOTE2
 
@@ -121,8 +121,8 @@ $ docker rm proxy-xray
 The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given id. All sites and IP from China will not been proxied.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray --ltx \
-myid@mydomain.duckdns.org:443 --china-direct
+$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
+--ltx myid@mydomain.duckdns.org:443 --china-direct
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
@@ -130,8 +130,8 @@ myid@mydomain.duckdns.org:443 --china-direct
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will be proxied. All sites located in China will not be proxied.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttw \
-myid@mydomain.duckdns.org:443:/websocket \
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray \
+--lttw myid@mydomain.duckdns.org:443:/websocket \
 --domain-proxy geosite:apple-cn --domain-direct geosite:geolocation-cn
 ```
 
@@ -140,8 +140,8 @@ myid@mydomain.duckdns.org:443:/websocket \
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password. All sites not located in China will be proxied. You need to escape '!' character in --domain-proxy parameter to be accepted by shell.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray --lttg \
-myid@mydomain.duckdns.org:443:/gsvc --domain-proxy geosite:geolocation-\!cn
+$ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray \
+--lttg myid@mydomain.duckdns.org:443:/gsvc --domain-proxy geosite:geolocation-\!cn
 ```
 
 ### 4. Connect to TCP+TLS+Trojan server
@@ -149,8 +149,8 @@ myid@mydomain.duckdns.org:443:/gsvc --domain-proxy geosite:geolocation-\!cn
 The following instruction connect to Xray server port 443 in TCP+TLS+Trojan mode with given password.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --ttt \
-trojan_pass@mydomain.duckdns.org:8443
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray \
+--ttt trojan_pass@mydomain.duckdns.org:8443
 ```
 
 ### 5. Start proxy-xray container in debug mode for for connection issue diagnosis

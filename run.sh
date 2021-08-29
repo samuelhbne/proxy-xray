@@ -121,7 +121,7 @@ if [ "${IGCHINA}" = "1" ]; then
 else
     rm -rf /etc/dnsmasq.d/*.china.conf
 fi
-dnsmasq
+/usr/sbin/dnsmasq
 
 if [ -z "${DNS}" ]; then
     DNS="1.1.1.1"
