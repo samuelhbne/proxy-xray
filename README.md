@@ -32,14 +32,16 @@ $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     -d|--debug                         [Optional] Start in debug mode with verbose output
-    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server ip, 1.1.1.1 will be applied by default
-    --china-direct                     [Optional] Add routing rules to avoid domain and ip located in China being proxied
+    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
+    --dns-local <local-conf-file>      [Optional] Enable designated domain conf file. Like apple.china.conf
+    --dns-local-cn                     [Optional] Enable China related domains to be resolved in China
     --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
     --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
     --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all
     --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
     --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
     --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private
+    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied
     --ltx  <VLESS-TCP-XTLS option>     id@host:port
     --ltt  <VLESS-TCP-TLS option>      id@host:port
     --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath
@@ -50,7 +52,7 @@ proxy-xray <connection-options>
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
 $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
--d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --china-direct
+-d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --cn-direct
 ...
 ```
 
@@ -64,7 +66,7 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 
 ### NOTE4
 
-Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--china-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
+Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--cn-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
 
 ## How to verify if proxy tunnel is working properly
 
@@ -122,7 +124,7 @@ The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
---ltx myid@mydomain.duckdns.org:443 --china-direct
+--ltx myid@mydomain.duckdns.org:443 --cn-direct
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server

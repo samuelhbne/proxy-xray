@@ -8,6 +8,7 @@ RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/re
 RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
 RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
@@ -23,18 +24,17 @@ COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
 COPY --from=builder /tmp/geosite.dat /usr/local/bin/
 COPY --from=builder /tmp/geoip.dat /usr/local/bin/
 
-RUN mkdir -p /etc/dnsmasq-china.d
+RUN mkdir -p /etc/dnsmasq.disable
 
-COPY --from=builder /tmp/apple.china.conf /etc/dnsmasq-china.d/
-COPY --from=builder /tmp/bogus-nxdomain.china.conf /etc/dnsmasq-china.d/
-COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq-china.d/
+COPY --from=builder /tmp/apple.china.conf /etc/dnsmasq.disable/
+COPY --from=builder /tmp/google.china.conf /etc/dnsmasq.disable/
+COPY --from=builder /tmp/bogus-nxdomain.china.conf /etc/dnsmasq.disable/
+COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq.disable/
 
 RUN apk update && apk add bash openssl curl jq moreutils \
-    bind-tools whois dnsmasq ca-certificates proxychains-ng npm
+    whois dnsmasq ca-certificates proxychains-ng npm
 RUN npm config set unsafe-perm true
 RUN npm install -g qrcode-terminal
-
-RUN echo -e "no-resolv\nserver=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
