@@ -52,7 +52,7 @@ proxy-xray <connection-options>
     --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
 
 $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
--d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --cn-direct
+-d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
 ...
 ```
 
@@ -66,7 +66,7 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 
 ### NOTE4
 
-Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--cn-direct" options applied. Or dnsmasq will act as a forwarder only cache server otherwise.
+Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise dnsmasq will act as a forward only cache server.
 
 ## How to verify if proxy tunnel is working properly
 
