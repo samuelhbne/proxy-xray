@@ -54,14 +54,14 @@ while true ; do
             shift 2
             ;;
         --dns-local)
-            DNSLOCAL+=$2
+            DNSLOCAL+=($2)
             shift 2
             ;;
         --dns-local-cn)
-            DNSLOCAL+="apple.china.conf"
-            DNSLOCAL+="google.china.conf"
-            DNSLOCAL+="bogus-nxdomain.china.conf"
-            DNSLOCAL+="accelerated-domains.china.conf"
+            DNSLOCAL+=("apple.china.conf")
+            DNSLOCAL+=("google.china.conf")
+            DNSLOCAL+=("bogus-nxdomain.china.conf")
+            DNSLOCAL+=("accelerated-domains.china.conf")
             shift 1
             ;;
         --cn-direct)
@@ -133,7 +133,7 @@ if [ "${XRAY}" != "1" ]; then
 fi
 
 if [ -n "${DNSLOCAL}" ]; then
-    for dnslocal in "${DNSLOCAL}"
+    for dnslocal in "${DNSLOCAL[@]}"
     do
         cp -a /etc/dnsmasq.disable/${dnslocal} /etc/dnsmasq.d/
     done
