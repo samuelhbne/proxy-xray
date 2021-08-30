@@ -6,18 +6,6 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray <connection-options>"
-    echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
-    echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
-    echo "    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
-    echo "    --dns-local <local-conf-file>      [Optional] Enable designated domain conf file. Like apple.china.conf"
-    echo "    --dns-local-cn                     [Optional] Enable China related domains to be resolved in China"
-    echo "    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
-    echo "    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
-    echo "    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all"
-    echo "    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"
-    echo "    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix"
-    echo "    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private"
-    echo "    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied"
     echo "    --ltx  <VLESS-TCP-XTLS option>     id@host:port"
     echo "    --ltt  <VLESS-TCP-TLS option>      id@host:port"
     echo "    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath"
@@ -28,12 +16,25 @@ usage() {
     echo "    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath"
 #   echo "    --ssa  <Shadowsocks-AEAD option>   password:method@host:port"
 #   echo "    --sst  <Shadowsocks-TCP option>    password:method@host:port"
+    echo "    -d|--debug                         [Optional] Start in debug mode with verbose output"
+    echo "    -i|--stdin                         [Optional] Read config from stdin instead of auto generation"
+    echo "    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
+    echo "    --dns-local <local-conf-file>      [Optional] Enable designated domain conf file. Like apple.china.conf"
+    echo "    --dns-local-cn                     [Optional] Enable China-accessible domains to be resolved in China"
+    echo "    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
+    echo "    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
+    echo "    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all"
+    echo "    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"
+    echo "    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix"
+    echo "    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private"
+    echo "    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied"
+    echo "    --rules-path    <rules-dir-path>   [Optional] Folder path contents geoip.dat, geosite.dat and other rule files"
 }
 
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,stdin,debug -n "$0" -- $@`
+TEMP=`getopt -o di --long ltx:,ltt:,lttw:,lttg:,mtt:,mttw:,ttt:,tttw:,ssa:,sst:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
@@ -105,6 +106,10 @@ while true ; do
         --ip-block)
             Jrules=`echo "${Jrules}" | jq --arg blkip "$2" \
             '.rules += [{"type":"field", "outboundTag":"block", "ip":[$blkip]}]'`
+            shift 2
+            ;;
+        --rules-path)
+            export XRAY_LOCATION_ASSET=$2
             shift 2
             ;;
         -i|--stdin)
