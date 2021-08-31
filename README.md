@@ -30,14 +30,14 @@ Please replace "amd64" with the arch match the current box accordingly. Other su
 ```shell
 $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
-    --ltx  <VLESS-TCP-XTLS option>     id@host:port
-    --ltt  <VLESS-TCP-TLS option>      id@host:port
-    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath
-    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath
-    --mtt  <VMESS-TCP-TLS option>      id@host:port
-    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath
-    --ttt  <TROJAN-TCP-TLS option>     password@host:port
-    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath
+    --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]
+    --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]
+    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
+    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath[,s=sniname.org]
+    --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]
+    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
+    --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]
+    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath[,s=sniname.org]
     -d|--debug                         [Optional] Start in debug mode with verbose output
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default

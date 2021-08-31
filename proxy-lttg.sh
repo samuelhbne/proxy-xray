@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-lttg <uuid@domain0.com:443:/svcpath>"
+    >&2 echo "Usage: proxy-lttg <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then
@@ -10,15 +10,30 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# uuid@domain0.com:443:/svcpath
-temp=$1
-options=(`echo $temp |tr '@' ' '`)
+# id@domain.com:443:/svcpath,serverName=x.org,fingerprint=safari
+args=(`echo $1 |tr ',' ' '`)
+dest="${args[0]}"
+for ext_opt in "${args[@]}"
+do
+    kv=(`echo $ext_opt |tr '=' ' '`)
+    case "${kv[0]}" in
+        s|serverName)
+            serverName="${kv[1]}"
+            ;;
+        f|fingerprint)
+            fingerprint="${kv[1]}"
+            ;;
+    esac
+done
+options=(`echo $dest |tr '@' ' '`)
 id="${options[0]}"
-temp="${options[1]}"
-options=(`echo $temp |tr ':' ' '`)
+options=(`echo ${options[1]} |tr ':' ' '`)
 host="${options[0]}"
 port="${options[1]}"
 path="${options[2]}"
+
+if [ -z "${serverName}" ]; then serverName=${host}; fi
+if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
 
 if [ -z "${id}" ]; then
     >&2 echo "Error: uuid undefined."
@@ -43,8 +58,8 @@ Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none",
 Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`echo '{}' | jq --arg host "${host}" --arg path "${path}" \
-'. += {"network":"grpc", "security":"tls", "tlsSettings":{"serverName":$host}, "grpcSettings":{"serviceName":$path}}' `
+JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+'. += {"network":"grpc", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "grpcSettings":{"serviceName":$path}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
