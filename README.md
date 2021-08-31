@@ -41,7 +41,6 @@ proxy-xray <connection-options>
     -d|--debug                         [Optional] Start in debug mode with verbose output
     -i|--stdin                         [Optional] Read config from stdin instead of auto generation
     --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
-    --dns-local <local-conf-file>      [Optional] Enable designated domain conf file. Like apple.china.conf
     --dns-local-cn                     [Optional] Enable China-accessible domains to be resolved in China
     --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
     --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
