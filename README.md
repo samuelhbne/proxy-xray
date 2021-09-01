@@ -120,11 +120,11 @@ $ docker rm proxy-xray
 
 ### 1. Connect to Vless+TCP+XTLS server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+XTLS mode with given id. All sites and IP from China will not been proxied.
+The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All sites and IP from China will not been proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
---ltx myid@mydomain.duckdns.org:443 --cn-direct
+--ltx myid@12.34.56.78:443,serverName=mydomain.duckdns.org --cn-direct
 ```
 
 ### 2. Connect to Vless+TCP+TLS+Websocket server
