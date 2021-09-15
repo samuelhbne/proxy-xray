@@ -33,7 +33,7 @@ proxy-xray <connection-options>
     --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]
     --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]
     --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
-    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath[,s=sniname.org]
+    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:svcname[,s=sniname.org]
     --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]
     --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
     --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]
@@ -143,7 +143,7 @@ The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC 
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray \
---lttg myid@mydomain.duckdns.org:443:/gsvc --domain-proxy geosite:geolocation-\!cn
+--lttg myid@mydomain.duckdns.org:443:gsvc --domain-proxy geosite:geolocation-\!cn
 ```
 
 ### 4. Connect to TCP+TLS+Trojan server

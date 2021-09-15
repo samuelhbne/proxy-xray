@@ -9,7 +9,7 @@ usage() {
     echo "    --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]"
     echo "    --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]"
     echo "    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]"
-    echo "    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:/svcpath[,s=sniname.org]"
+    echo "    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:svcname[,s=sniname.org]"
     echo "    --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]"
     echo "    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]"
     echo "    --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]"
