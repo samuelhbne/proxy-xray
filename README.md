@@ -4,59 +4,15 @@
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 
-## [Optional] How to build proxy-xray docker image
-
-```shell
-$ git clone https://github.com/samuelhbne/proxy-xray.git
-$ cd proxy-xray
-$ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
-...
-```
-
-### NOTE1
-
-Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
-
-- "arm64" for arm64v8 platforms. Support Raspberry Pi4 with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
-- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (Pi2, Pi3, Pi4) with 32bits OS like [Ubuntu armhf](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
-
-### NOTE2
-
-- [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (AKA Raspbian) users may encounter dnsmasq core dump issue due to the broken docker.io package from Raspbian upstream. Please switch to Ubuntu, Debian to avoid this issue or wait the fix from Raspbian. Although SOCKS/HTTP proxies still work properly.
-- arm32v5 platforms are not supported yet.
-
 ## How to start proxy-xray container
 
 ```shell
-$ docker run --rm samuelhbne/proxy-xray
-proxy-xray <connection-options>
-    --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]
-    --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]
-    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
-    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:svcname[,s=sniname.org]
-    --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]
-    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
-    --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]
-    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath[,s=sniname.org]
-    -d|--debug                         [Optional] Start in debug mode with verbose output
-    -i|--stdin                         [Optional] Read config from stdin instead of auto generation
-    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
-    --dns-local-cn                     [Optional] Enable China-accessible domains to be resolved in China
-    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
-    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
-    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all
-    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
-    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
-    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private
-    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied
-    --rules-path    <rules-dir-path>   [Optional] Folder path contents geoip.dat, geosite.dat and other rule files
-
 $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
 -d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
 ...
 ```
 
-### NOTE3
+### NOTE 1
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
 - Please replace 2080 (-p 2080:1080, -p 2080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
@@ -64,7 +20,7 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 - Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
 - Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
 
-### NOTE4
+### NOTE 2
 
 Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise dnsmasq will act as a forward only cache server.
 
@@ -89,7 +45,7 @@ $ docker exec proxy-xray proxychains whois 104.244.42.193|grep OrgId
 OrgId:          TWITT
 ```
 
-### NOTE5
+### NOTE 3
 
 - curl should return the Xray server address given above if SOCKS5/HTTP proxy works properly.
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
@@ -106,6 +62,33 @@ Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls
 ```
 
 ![QR code example](https://github.com/samuelhbne/proxy-xray/blob/master/images/qr-xray.png)
+
+## Full usage
+
+```shell
+$ docker run --rm samuelhbne/proxy-xray
+proxy-xray <connection-options>
+    --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]
+    --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]
+    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
+    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:svcname[,s=sniname.org]
+    --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]
+    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
+    --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]
+    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath[,s=sniname.org]
+    -d|--debug                         [Optional] Start in debug mode with verbose output
+    -i|--stdin                         [Optional] Read config from stdin instead of auto generation
+    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
+    --dns-local-cn                     [Optional] Enable China-accessible domains to be resolved in China
+    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
+    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
+    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all
+    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
+    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
+    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private
+    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied
+    --rules-path    <rules-dir-path>   [Optional] Folder path contents geoip.dat, geosite.dat and other rule files
+```
 
 ## How to stop and remove the running container
 
@@ -170,9 +153,41 @@ $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 --mttw myid@mydomain.duckdns.org:443:/websocket --debug
 ```
 
-### NOTE6
+### NOTE 4
 
 For more details about routing rules setting up please look into [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project (Chinese).
+
+## [Optional] Build proxy-xray docker image matches the current host architecture
+
+```shell
+$ git clone https://github.com/samuelhbne/proxy-xray.git
+$ cd proxy-xray
+$ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
+...
+```
+
+### NOTE 5
+
+Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
+
+- "arm64" for arm64v8 platforms. Support Raspberry Pi4 with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
+- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (Pi2, Pi3, Pi4) with 32bits OS like [Ubuntu armhf](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
+
+### NOTE 6
+
+- [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (AKA Raspbian) users may encounter dnsmasq core dump issue due to the broken docker.io package from Raspbian upstream. Please switch to Ubuntu, Debian to avoid this issue or wait the fix from Raspbian. Although SOCKS/HTTP proxies still work properly.
+- arm32v5 platforms are not supported yet.
+
+### [Optional] Cross-compile docker image for the platforms with different architecture
+
+Please refer the [official doc](https://docs.docker.com/engine/reference/commandline/buildx_install/) for docker-buildx installation
+
+```shell
+docker buildx build --platform=linux/arm/v7 -t samuelhbne/proxy-xray:armv7 -f Dockerfile.arm .
+docker buildx build --platform=linux/arm/v6 -t samuelhbne/proxy-xray:armv6 -f Dockerfile.arm .
+docker buildx build --platform=linux/arm64 -t samuelhbne/proxy-xray:arm64 -f Dockerfile.arm64 .
+docker buildx build --platform=linux/amd64 -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
+```
 
 ## Credits
 
