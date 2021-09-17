@@ -6,6 +6,13 @@
 
 ## How to start proxy-xray container
 
+The following command will:
+
+1. Export SOCKS, HTTP and DNS service ports of proxy-xray
+2. Start proxy-xray on VLESS-TCP-XTLS mode connect to mydomain.duckdns.org port 443 with user-id "myid"
+3. All destination sites and IP in China will not been proxied.
+4. Enable China-accessible domains to be resolved in China
+
 ```shell
 $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
 -d samuelhbne/proxy-xray --ltx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
@@ -103,7 +110,7 @@ $ docker rm proxy-xray
 
 ### 1. Connect to Vless+TCP+XTLS server
 
-The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All sites and IP from China will not been proxied.
+The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All destination sites and IP located in China will not been proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
@@ -157,7 +164,7 @@ $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
 
 For more details about routing rules setting up please look into [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project (Chinese).
 
-## [Optional] Build proxy-xray docker image matches the current host architecture
+## Build proxy-xray docker image matches the current host architecture
 
 ```shell
 $ git clone https://github.com/samuelhbne/proxy-xray.git
@@ -178,7 +185,7 @@ Please replace "amd64" with the arch match the current box accordingly. Other su
 - [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (AKA Raspbian) users may encounter dnsmasq core dump issue due to the broken docker.io package from Raspbian upstream. Please switch to Ubuntu, Debian to avoid this issue or wait the fix from Raspbian. Although SOCKS/HTTP proxies still work properly.
 - arm32v5 platforms are not supported yet.
 
-### [Optional] Cross-compile docker image for the platforms with different architecture
+### Cross-compile docker image for the platforms with different architecture
 
 Please refer the [official doc](https://docs.docker.com/engine/reference/commandline/buildx_install/) for docker-buildx installation
 
