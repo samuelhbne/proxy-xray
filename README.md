@@ -203,3 +203,5 @@ Thanks to [RPRX](https://github.com/RPRX) for the [Xray](https://github.com/XTLS
 Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for the [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project.
 
 Thanks to [felixonmars](https://github.com/felixonmars) for the [dnsmasq-china-list](https://github.com/felixonmars/dnsmasq-china-list) project.
+
+Thanks to [SamadiPour](https://github.com/SamadiPour) for the [iran-hosted-domains](https://github.com/SamadiPour/iran-hosted-domains) project.
