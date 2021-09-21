@@ -177,7 +177,7 @@ $ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
 
 Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
 
-- "arm64" for arm64v8 platforms. Support Raspberry Pi4 with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
+- "arm64" for arm64v8 platforms. Support AWS A1, t4g instances as well as Apple M1, Raspberry Pi4 with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
 - "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (Pi2, Pi3, Pi4) with 32bits OS like [Ubuntu armhf](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
 
 ### NOTE 6
