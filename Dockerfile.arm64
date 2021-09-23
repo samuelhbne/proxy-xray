@@ -1,6 +1,6 @@
 FROM arm64v8/golang:1.17-alpine as builder
 
-ARG XRAYVER='v1.4.4'
+ARG XRAYVER='v1.4.5'
 
 RUN apk add --no-cache bash git build-base wget
 
