@@ -2,7 +2,10 @@ name: docker-buildx-latest
 
 on:
   push:
-    branches: master
+    branches:
+      - master
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   multi-arch-latest:

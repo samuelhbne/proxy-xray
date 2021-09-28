@@ -2,7 +2,10 @@ name: docker-buildx-dev
 
 on:
   push:
-    branches: dev
+    branches:
+      - dev
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   multi-arch-dev:
