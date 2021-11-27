@@ -138,7 +138,7 @@ $ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray \
 
 ### 4. Connect to TCP+TLS+Trojan server
 
-The following instruction connect to Xray server port 443 in TCP+TLS+Trojan mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directed.
+The following instruction connect to Xray server port 443 in TCP+TLS+Trojan mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directly.
 
 ```shell
 $ mkdir -p /tmp/rules
