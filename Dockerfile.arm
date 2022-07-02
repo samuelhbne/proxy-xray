@@ -40,11 +40,15 @@ RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.c
 
 ADD proxy-ltx.sh    /proxy-ltx.sh
 ADD proxy-ltt.sh    /proxy-ltt.sh
+ADD proxy-ltpw.sh   /proxy-ltpw.sh
 ADD proxy-lttw.sh   /proxy-lttw.sh
+ADD proxy-ltpg.sh   /proxy-ltpg.sh
 ADD proxy-lttg.sh   /proxy-lttg.sh
 ADD proxy-mtt.sh    /proxy-mtt.sh
+ADD proxy-mtpw.sh   /proxy-mtpw.sh
 ADD proxy-mttw.sh   /proxy-mttw.sh
 ADD proxy-ttt.sh    /proxy-ttt.sh
+ADD proxy-ttpw.sh   /proxy-ttpw.sh
 ADD proxy-tttw.sh   /proxy-tttw.sh
 ADD status.sh       /status.sh
 ADD run.sh          /run.sh

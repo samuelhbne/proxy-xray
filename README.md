@@ -75,26 +75,30 @@ Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls
 ```shell
 $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
-    --ltx  <VLESS-TCP-XTLS option>     id@host:port[,s=sniname.org]
-    --ltt  <VLESS-TCP-TLS option>      id@host:port[,s=sniname.org]
-    --lttw <VLESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
-    --lttg <VLESS-TCP-TLS-GRPC option> id@host:port:svcname[,s=sniname.org]
-    --mtt  <VMESS-TCP-TLS option>      id@host:port[,s=sniname.org]
-    --mttw <VMESS-TCP-TLS-WS option>   id@host:port:/webpath[,s=sniname.org]
-    --ttt  <TROJAN-TCP-TLS option>     password@host:port[,s=sniname.org]
-    --tttw <TROJAN-TCP-TLS-WS option>  password@host:port:/webpath[,s=sniname.org]
-    -d|--debug                         [Optional] Start in debug mode with verbose output
-    -i|--stdin                         [Optional] Read config from stdin instead of auto generation
-    --dns <upstream-DNS-ip>            [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
-    --dns-local-cn                     [Optional] Enable China-accessible domains to be resolved in China
-    --domain-direct <domain-rule>      [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
-    --domain-proxy  <domain-rule>      [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
-    --domain-block  <domain-rule>      [Optional] Add a domain rule for block routing, like geosite:category-ads-all
-    --ip-direct     <ip-rule>          [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
-    --ip-proxy      <ip-rule>          [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
-    --ip-block      <ip-rule>          [Optional] Add a ip-addr rule for block routing, like geoip:private
-    --cn-direct                        [Optional] Add routing rules to avoid domains and IPs located in China being proxied
-    --rules-path    <rules-dir-path>   [Optional] Folder path contents geoip.dat, geosite.dat and other rule files
+    --ltx  <VLESS-TCP-XTLS option>        id@host:port[,s=sniname.org]
+    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sniname.org]
+    --ltpw <VLESS-TCP-PLAIN-WS option>    id@host:port:/webpath
+    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath[,s=sniname.org]
+    --ltpg <VLESS-TCP-PLAIN-GRPC option>  id@host:port:svcname
+    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:svcname[,s=sniname.org]
+    --mtt  <VMESS-TCP-TLS option>         id@host:port[,s=sniname.org]
+    --mtpw <VMESS-TCP-PLAIN-WS option>    id@host:port:/webpath
+    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath[,s=sniname.org]
+    --ttt  <TROJAN-TCP-TLS option>        password@host:port[,s=sniname.org]
+    --ttpw <TROJAN-TCP-PLAIN-WS option>   password@host:port:/webpath
+    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath[,s=sniname.org]
+    -d|--debug                            [Optional] Start in debug mode with verbose output
+    -i|--stdin                            [Optional] Read config from stdin instead of auto generation
+    --dns <upstream-DNS-ip>               [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default
+    --dns-local-cn                        [Optional] Enable China-accessible domains to be resolved in China
+    --domain-direct <domain-rule>         [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
+    --domain-proxy  <domain-rule>         [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
+    --domain-block  <domain-rule>         [Optional] Add a domain rule for block routing, like geosite:category-ads-all
+    --ip-direct     <ip-rule>             [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
+    --ip-proxy      <ip-rule>             [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
+    --ip-block      <ip-rule>             [Optional] Add a ip-addr rule for block routing, like geoip:private
+    --cn-direct                           [Optional] Add routing rules to avoid domains and IPs located in China being proxied
+    --rules-path    <rules-dir-path>      [Optional] Folder path contents geoip.dat, geosite.dat and other rule files
 ```
 
 ## How to stop and remove the running container
