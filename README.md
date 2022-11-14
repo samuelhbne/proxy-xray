@@ -1,6 +1,8 @@
 # proxy-xray
 
-[Xray](https://github.com/XTLS/Xray-core) client container with SOCKS5/HTTP/DNS proxy and QR code support. Support x86 and arm/arm64 (Raspberry Pi).
+[Xray](https://github.com/XTLS/Xray-core) is a low detectable VPN. proxy-xray is a Xray client container that runs Xray with config file generated from command line options directly hence remove the necessity of Xray config modification.
+
+Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to set a Xray server ready first.
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 
@@ -22,9 +24,9 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 ### NOTE 1
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
-- Please replace 2080 (-p 2080:1080, -p 2080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
-- Please replace 8223 (-p 8223:8123) with the port number you set for HTTP proxy TCP listerning.
-- Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
+- (optional) Please replace 2080 (-p 2080:1080, -p 2080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
+- (optional) Please replace 8223 (-p 8223:8123) with the port number you set for HTTP proxy TCP listerning.
+- (optional) Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
 - Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
 
 ### NOTE 2
@@ -58,7 +60,6 @@ OrgId:          TWITT
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
 - Whois should return "OrgId: TWITT". That means the IP address returned from dig query belongs to twitter.com indeed, hence untaminated.
 - Whois was actually running inside the proxy container through the proxy tunnel to avoid potential access blocking.
-- Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to set a Xray server.
 
 ## How to get the XRay QR code for mobile connection
 
