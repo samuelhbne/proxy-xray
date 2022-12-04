@@ -36,10 +36,10 @@ Name query for sites outside China like twitter.com will be always forwarded to 
 ## How to verify if proxy tunnel is working properly
 
 ```shell
-$ curl -sSx socks5h://127.0.0.1:2080 https://ifconfig.co
+$ curl -sSx socks5h://127.0.0.1:2080 https://checkip.amazonaws.com
 12.34.56.78
 
-$ curl -sSx http://127.0.0.1:8223 https://checkip.amazonaws.com/
+$ curl -sSx http://127.0.0.1:8223 https://checkip.amazonaws.com
 12.34.56.78
 
 $ dig +short @127.0.0.1 -p 65353 twitter.com
