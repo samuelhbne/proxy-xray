@@ -33,7 +33,7 @@ COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq.disable/
 
 RUN apk update && apk add bash openssl curl jq moreutils \
     whois dnsmasq ca-certificates proxychains-ng npm
-RUN npm install -g qrcode-terminal
+RUN npm install --unsafe-perm=true -g qrcode-terminal
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
