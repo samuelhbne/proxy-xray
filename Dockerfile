@@ -1,6 +1,6 @@
-FROM arm32v6/golang:1.20-alpine as builder
+FROM golang:1.19-alpine as builder
 
-ARG XRAYVER='v1.7.5'
+ARG XRAYVER='v1.6.2'
 
 RUN apk add --no-cache bash git build-base wget
 
@@ -18,7 +18,7 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
 
-FROM arm32v6/alpine:3.17
+FROM alpine:3.17
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
 COPY --from=builder /tmp/geosite.dat /usr/local/bin/

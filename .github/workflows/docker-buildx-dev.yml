@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            file: ./Dockerfile.amd64
+            file: ./Dockerfile
             platforms: |
               linux/amd64
               linux/arm64
@@ -54,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            file: ./Dockerfile.amd64
+            file: ./Dockerfile
             platforms: linux/amd64
             push: true
             tags: ${{ github.repository }}:amd64dev
@@ -63,7 +63,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            file: ./Dockerfile.arm64
+            file: ./Dockerfile
             platforms: linux/arm64
             push: true
             tags: ${{ github.repository }}:arm64dev
@@ -72,7 +72,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            file: ./Dockerfile.arm
+            file: ./Dockerfile
             platforms: linux/arm/v7
             push: true
             tags: ${{ github.repository }}:armv7dev
@@ -81,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            file: ./Dockerfile.arm
+            file: ./Dockerfile
             platforms: linux/arm/v6
             push: true
             tags: ${{ github.repository }}:armdev
