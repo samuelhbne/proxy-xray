@@ -84,4 +84,4 @@ jobs:
             file: ./Dockerfile
             platforms: linux/arm/v6
             push: true
-            tags: ${{ github.repository }}:armdev
+            tags: ${{ github.repository }}:armv6dev
