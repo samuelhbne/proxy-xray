@@ -1,6 +1,6 @@
-FROM golang:1.19-alpine as builder
+FROM golang:1.20-alpine as builder
 
-ARG XRAYVER='v1.6.2'
+ARG XRAYVER='v1.7.5'
 
 RUN apk add --no-cache bash git build-base wget
 
