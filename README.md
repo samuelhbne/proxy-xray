@@ -174,31 +174,19 @@ For more details about routing rules setting up please look into [v2ray-rules-da
 ```shell
 $ git clone https://github.com/samuelhbne/proxy-xray.git
 $ cd proxy-xray
-$ docker build -t samuelhbne/proxy-xray -f Dockerfile.amd64 .
+$ docker build -t samuelhbne/proxy-xray .
 ...
 ```
-
-### NOTE 5
-
-Please replace "amd64" with the arch match the current box accordingly. Other supported platforms:
-
-- "arm64" for arm64v8 platforms. Support AWS A1, t4g instances as well as Apple M1, Raspberry Pi4 with 64bits OS like [Ubuntu arm64](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
-- "arm" for arm32v7 platforms. Support most Raspberry-Pi releases (Pi2, Pi3, Pi4) with 32bits OS like [Ubuntu armhf](https://ubuntu.com/download/raspberry-pi) or [Debian](https://raspi.debian.net/tested-images/).
-
-### NOTE 6
-
-- [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (AKA Raspbian) users may encounter dnsmasq core dump issue due to the broken docker.io package from Raspbian upstream. Please switch to Ubuntu, Debian to avoid this issue or wait the fix from Raspbian. Although SOCKS/HTTP proxies still work properly.
-- arm32v5 platforms are not supported yet.
 
 ### Cross-compile docker image for the platforms with different architecture
 
 Please refer the [official doc](https://docs.docker.com/engine/reference/commandline/buildx_install/) for docker-buildx installation
 
 ```shell
-docker buildx build --platform=linux/arm/v7 -t samuelhbne/proxy-xray:armv7 -f Dockerfile.arm .
-docker buildx build --platform=linux/arm/v6 -t samuelhbne/proxy-xray:armv6 -f Dockerfile.arm .
-docker buildx build --platform=linux/arm64 -t samuelhbne/proxy-xray:arm64 -f Dockerfile.arm64 .
-docker buildx build --platform=linux/amd64 -t samuelhbne/proxy-xray:amd64 -f Dockerfile.amd64 .
+docker buildx build --platform=linux/arm/v7 -t samuelhbne/proxy-xray:armv7 .
+docker buildx build --platform=linux/arm/v6 -t samuelhbne/proxy-xray:armv6 .
+docker buildx build --platform=linux/arm64 -t samuelhbne/proxy-xray:arm64 .
+docker buildx build --platform=linux/amd64 -t samuelhbne/proxy-xray:amd64 .
 ```
 
 ## Credits
