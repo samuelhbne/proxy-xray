@@ -31,7 +31,7 @@ COPY --from=builder /tmp/google.china.conf /etc/dnsmasq.disable/
 COPY --from=builder /tmp/bogus-nxdomain.china.conf /etc/dnsmasq.disable/
 COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq.disable/
 
-RUN apk update && apk add bash openssl curl jq moreutils \
+RUN apk --no-cache add bash openssl curl jq moreutils \
     whois dnsmasq ca-certificates proxychains-ng npm
 RUN npm install -g qrcode-terminal --verbose
 
