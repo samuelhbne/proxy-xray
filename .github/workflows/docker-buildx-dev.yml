@@ -49,39 +49,3 @@ jobs:
               linux/arm/v6
             push: true
             tags: ${{ github.repository }}:dev
-      -
-        name: Build and push AMD64
-        uses: docker/build-push-action@v2
-        with:
-            context: .
-            file: ./Dockerfile
-            platforms: linux/amd64
-            push: true
-            tags: ${{ github.repository }}:amd64dev
-      -
-        name: Build and push ARM64v8
-        uses: docker/build-push-action@v2
-        with:
-            context: .
-            file: ./Dockerfile
-            platforms: linux/arm64
-            push: true
-            tags: ${{ github.repository }}:arm64dev
-      -
-        name: Build and push ARM32v7
-        uses: docker/build-push-action@v2
-        with:
-            context: .
-            file: ./Dockerfile
-            platforms: linux/arm/v7
-            push: true
-            tags: ${{ github.repository }}:armv7dev
-      -
-        name: Build and push ARM32v6
-        uses: docker/build-push-action@v2
-        with:
-            context: .
-            file: ./Dockerfile
-            platforms: linux/arm/v6
-            push: true
-            tags: ${{ github.repository }}:armv6dev
