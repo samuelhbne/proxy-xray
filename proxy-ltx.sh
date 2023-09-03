@@ -52,13 +52,13 @@ fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
-Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "flow":"xtls-rprx-direct", "encryption":"none", "level":0}'`
+Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "flow":"xtls-rprx-vision", "encryption":"none", "level":0}'`
 
 Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" \
-'. += {"network":"tcp", "security":"xtls", "xtlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}}' `
+'. += {"network":"tcp", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
