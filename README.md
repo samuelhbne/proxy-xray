@@ -183,10 +183,10 @@ $ docker build -t samuelhbne/proxy-xray .
 Please refer the [official doc](https://docs.docker.com/engine/reference/commandline/buildx_install/) for docker-buildx installation
 
 ```shell
-docker buildx build --platform=linux/arm/v7 -t samuelhbne/proxy-xray:armv7 .
-docker buildx build --platform=linux/arm/v6 -t samuelhbne/proxy-xray:armv6 .
-docker buildx build --platform=linux/arm64 -t samuelhbne/proxy-xray:arm64 .
-docker buildx build --platform=linux/amd64 -t samuelhbne/proxy-xray:amd64 .
+docker buildx build --platform=linux/arm/v7 --output type=docker -t samuelhbne/proxy-xray:armv7 .
+docker buildx build --platform=linux/arm/v6 --output type=docker -t samuelhbne/proxy-xray:armv6 .
+docker buildx build --platform=linux/arm64 --output type=docker -t samuelhbne/proxy-xray:arm64 .
+docker buildx build --platform=linux/amd64 --output type=docker -t samuelhbne/proxy-xray:amd64 .
 ```
 
 ## Credits
