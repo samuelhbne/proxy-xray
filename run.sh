@@ -137,6 +137,7 @@ while true ; do
 done
 
 if [ "${XRAY}" != "1" ]; then
+    echo "Missing Xray connection option"
     usage
     exit 1
 fi
