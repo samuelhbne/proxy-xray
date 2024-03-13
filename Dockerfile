@@ -18,7 +18,7 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
 
-FROM alpine:3.19
+FROM alpine:3.16
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
 COPY --from=builder /tmp/geosite.dat /usr/local/bin/
