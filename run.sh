@@ -50,7 +50,7 @@ while true ; do
                 echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
                 exit 2
             else
-                XRAY=1
+                XRAYCFG=1
             fi
             shift 2
             ;;
@@ -118,7 +118,7 @@ while true ; do
             ;;
         -i|--stdin)
             STDINCONF=1
-            XRAY=1
+            XRAYCFG=1
             shift 1
             ;;
         -d|--debug)
@@ -136,7 +136,7 @@ while true ; do
     esac
 done
 
-if [ "${XRAY}" != "1" ]; then
+if [ "${XRAYCFG}" != "1" ]; then
     echo "Missing Xray connection option"
     usage
     exit 1
