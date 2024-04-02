@@ -71,7 +71,7 @@ esac
 
 echo "VPS-Server: ${XHOST}"
 echo "Xray-URL: ${XURL}"
-qrcode-terminal "${XURL}"
+qrencode -m 2 -t ANSIUTF8 "${XURL}"
 exit 0
 
 
