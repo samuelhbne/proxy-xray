@@ -1,6 +1,6 @@
-FROM golang:1.22-alpine3.19 as builder
+FROM golang:1.22-alpine3.20 as builder
 
-ARG XRAY_VER='v1.8.10'
+ARG XRAY_VER='v1.8.23'
 ARG QREC_VER='4.1.1'
 
 RUN apk add --no-cache bash git build-base wget
@@ -26,7 +26,7 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray /usr/local/bin/
 COPY --from=builder /tmp/geosite.dat /usr/local/bin/

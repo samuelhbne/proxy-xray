@@ -180,7 +180,7 @@ $ docker build -t samuelhbne/proxy-xray .
 
 ### Cross-compile docker image for the platforms with different architecture
 
-Please refer the [official doc](https://docs.docker.com/engine/reference/commandline/buildx_install/) for docker-buildx installation
+Please refer the [official doc](https://github.com/docker/buildx) for docker-buildx installation
 
 ```shell
 docker buildx build --platform=linux/arm/v7 --output type=docker -t samuelhbne/proxy-xray:armv7 .
