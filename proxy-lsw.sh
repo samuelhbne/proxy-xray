@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-mttw <id@domain.com:443:/websocket>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "Usage: proxy-lsw <id@domain.com:443:/websocket>[,serverName=x.org][,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then
@@ -62,7 +62,7 @@ JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerpri
 '. += {"network":"ws", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "wsSettings":{"path":$path}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "tag": "proxy", "protocol":"vmess", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
+'. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
 Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
 Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 

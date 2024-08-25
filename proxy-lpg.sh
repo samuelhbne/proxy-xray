@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-ttpw <password@domain.com:443:/websocket>"
+    >&2 echo "Usage: proxy-lpg <id@domain.com:80:/svcpath>"
 }
 
 if [ -z "$1" ]; then
@@ -10,20 +10,16 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# password@domain.com:443:/websocket
+# id@domain.com:80:/svcpath
 options=(`echo $1 |tr '@' ' '`)
 id="${options[0]}"
 options=(`echo ${options[1]} |tr ':' ' '`)
 host="${options[0]}"
 port="${options[1]}"
 path="${options[2]}"
-passwd="${id}"
 
-if [ -z "${serverName}" ]; then serverName=${host}; fi
-if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
-
-if [ -z "${passwd}" ]; then
-    >&2 echo "Error: password undefined."
+if [ -z "${id}" ]; then
+    >&2 echo "Error: uuid undefined."
     usage
     exit 1
 fi
@@ -35,19 +31,21 @@ if [ -z "${host}" ]; then
 fi
 
 if [ -z "${port}" ]; then
-    port=443
+    port=80
 fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
-Jservers=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --arg passwd "${passwd}" \
-'. += {"address":$host, "port":($port | tonumber), "password":$passwd}' `
+Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
+
+Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
+'. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"ws", "security":"none", "wsSettings":{"path":$path}}' `
+'. += {"network":"grpc", "security":"none", "grpcSettings":{"serviceName":$path}}' `
 
-Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jservers "${Jservers}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "tag": "proxy", "protocol":"trojan", "settings":{"servers":[$jservers]}, "streamSettings":$jstreamSettings }' `
+Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
+'. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
 Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
 Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 

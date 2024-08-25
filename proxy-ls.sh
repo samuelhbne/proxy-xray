@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-lttw <id@domain.com:443:/websocket>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "Usage: proxy-ls <id@domain.com:443>[,serverName=x.org][,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then
@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# id@domain.com:443:/websocket,serverName=x.org,fingerprint=safari
+# id@domain.com:443,serverName=x.org,fingerprint=safari
 args=(`echo $1 |tr ',' ' '`)
 dest="${args[0]}"
 for ext_opt in "${args[@]}"
@@ -30,7 +30,6 @@ id="${options[0]}"
 options=(`echo ${options[1]} |tr ':' ' '`)
 host="${options[0]}"
 port="${options[1]}"
-path="${options[2]}"
 
 if [ -z "${serverName}" ]; then serverName=${host}; fi
 if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
@@ -58,8 +57,8 @@ Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none",
 Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"ws", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "wsSettings":{"path":$path}}' `
+JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" \
+'. += {"network":"tcp", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `

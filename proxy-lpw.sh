@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-ltpg <id@domain.com:80:/svcpath>"
+    >&2 echo "Usage: proxy-lpw <id@domain.com:80:/websocket>"
 }
 
 if [ -z "$1" ]; then
@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# id@domain.com:80:/svcpath
+# id@domain.com:443:/websocket
 options=(`echo $1 |tr '@' ' '`)
 id="${options[0]}"
 options=(`echo ${options[1]} |tr ':' ' '`)
@@ -42,7 +42,7 @@ Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"grpc", "security":"none", "grpcSettings":{"serviceName":$path}}' `
+'. += {"network":"ws", "security":"none", "wsSettings":{"path":$path}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `

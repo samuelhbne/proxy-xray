@@ -6,44 +6,44 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray <connection-options>"
-    echo "    --ltx  <VLESS-TCP-XTLS option>        id@host:port[,s=sniname.org]"
-    echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sniname.org]"
-    echo "    --ltpw <VLESS-TCP-PLAIN-WS option>    id@host:port:/webpath"
-    echo "    --lttw <VLESS-TCP-TLS-WS option>      id@host:port:/webpath[,s=sniname.org]"
-    echo "    --ltpg <VLESS-TCP-PLAIN-GRPC option>  id@host:port:svcname"
-    echo "    --lttg <VLESS-TCP-TLS-GRPC option>    id@host:port:svcname[,s=sniname.org]"
-    echo "    --mtt  <VMESS-TCP-TLS option>         id@host:port[,s=sniname.org]"
-    echo "    --mtpw <VMESS-TCP-PLAIN-WS option>    id@host:port:/webpath"
-    echo "    --mttw <VMESS-TCP-TLS-WS option>      id@host:port:/webpath[,s=sniname.org]"
-    echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port[,s=sniname.org]"
-    echo "    --ttpw <TROJAN-TCP-PLAIN-WS option>   password@host:port:/webpath"
-    echo "    --tttw <TROJAN-TCP-TLS-WS option>     password@host:port:/webpath[,s=sniname.org]"
-#   echo "    --ssa  <Shadowsocks-AEAD option>      password:method@host:port"
-#   echo "    --sst  <Shadowsocks-TCP option>       password:method@host:port"
-    echo "    -d|--debug                            [Optional] Start in debug mode with verbose output"
-    echo "    -i|--stdin                            [Optional] Read config from stdin instead of auto generation"
-    echo "    --dns <upstream-DNS-ip>               [Optional] Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
-#   echo "    --dns-local <local-conf-file>         [Optional] Enable designated domain conf file. Like apple.china.conf"
-    echo "    --dns-local-cn                        [Optional] Enable China-accessible domains to be resolved in China"
-    echo "    --domain-direct <domain-rule>         [Optional] Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
-    echo "    --domain-proxy  <domain-rule>         [Optional] Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
-    echo "    --domain-block  <domain-rule>         [Optional] Add a domain rule for block routing, like geosite:category-ads-all"
-    echo "    --ip-direct     <ip-rule>             [Optional] Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"
-    echo "    --ip-proxy      <ip-rule>             [Optional] Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix"
-    echo "    --ip-block      <ip-rule>             [Optional] Add a ip-addr rule for block routing, like geoip:private"
-    echo "    --cn-direct                           [Optional] Add routing rules to avoid domains and IPs located in China being proxied"
-    echo "    --rules-path    <rules-dir-path>      [Optional] Folder path contents geoip.dat, geosite.dat and other rule files"
+    echo "    --lx  <VLESS-XTLS option>         id@host:port[,s=sniname.org]"
+    echo "    --ls  <VLESS-TLS option>          id@host:port[,s=sniname.org]"
+    echo "    --ms  <VMESS-TLS option>          id@host:port[,s=sniname.org]"
+    echo "    --ts  <TROJAN-TLS option>         password@host:port[,s=sniname.org]"
+    echo "    --lsg <VLESS-TLS-GRPC option>     id@host:port:svcname[,s=sniname.org]"
+    echo "    --lss <VLESS-TLS-SPLT option>     id@host:port:/webpath[,s=sniname.org]"
+    echo "    --lsw <VLESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]"
+    echo "    --msw <VMESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]"
+    echo "    --tsw <TROJAN-TLS-WS option>      password@host:port:/wspath[,s=sniname.org]"
+    echo "    --lpg <VLESS-PLN-GRPC option>     id@host:port:svcname"
+    echo "    --lps <VLESS-PLN-SPLT option>     id@host:port:/webpath"
+    echo "    --lpw <VLESS-PLN-WS option>       id@host:port:/wspath"
+    echo "    --mpw <VMESS-PLN-WS option>       id@host:port:/wspath"
+    echo "    --tpw <TROJAN-PLN-WS option>      password@host:port:/wspath"
+    echo "    -d|--debug                        Start in debug mode with verbose output"
+    echo "    -i|--stdin                        Read config from stdin instead of auto generation"
+    echo "    --dns <upstream-DNS-ip>           Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
+#   echo "    --dns-local <local-conf-file>     Enable designated domain conf file. Like apple.china.conf"
+    echo "    --dns-local-cn                    Enable China-accessible domains to be resolved in China"
+    echo "    --domain-direct <domain-rule>     Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
+    echo "    --domain-proxy  <domain-rule>     Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
+    echo "    --domain-block  <domain-rule>     Add a domain rule for block routing, like geosite:category-ads-all"
+    echo "    --ip-direct     <ip-rule>         Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"
+    echo "    --ip-proxy      <ip-rule>         Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix"
+    echo "    --ip-block      <ip-rule>         Add a ip-addr rule for block routing, like geoip:private"
+    echo "    --cn-direct                       Add routing rules to avoid domains and IPs located in China being proxied"
+    echo "    --rules-path    <rules-dir-path>  Folder path contents geoip.dat, geosite.dat and other rule files"
 }
 
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long ltx:,ltt:,ltpw:,lttw:,ltpg:,lttg:,mtt:,mtpw:,mttw:,ttt:,ttpw:,tttw:,ssa:,sst:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
+TEMP=`getopt -o di --long lx:,ls:,ms:,ts:,lsg:,lss:,lsw:,msw:,tsw:,lpg:,lps:,lpw:,mpw:,tpw:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
     case "$1" in
-        --ltx|--ltt|--ltpw|--lttw|--ltpg|--lttg|--mtt|--mtpw|--mttw|--ttt|--ttpw|--tttw|--ssa|--sst)
+        --lx|--ls|--ms|--ts|--lsg|--lss|--lsw|--msw|--tsw|--lpg|--lps|--lpw|--mpw|--tpw)
             subcmd=`echo "$1"|tr -d "\-\-"`
             $DIR/proxy-${subcmd}.sh $2 >$XCONF
             if [ $? != 0 ]; then

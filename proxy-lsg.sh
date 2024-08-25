@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-lttg <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "Usage: proxy-lsg <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then

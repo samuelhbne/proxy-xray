@@ -46,18 +46,23 @@ RUN apk --no-cache add bash openssl curl jq moreutils \
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
-ADD proxy-ltx.sh    /proxy-ltx.sh
-ADD proxy-ltt.sh    /proxy-ltt.sh
-ADD proxy-ltpw.sh   /proxy-ltpw.sh
-ADD proxy-lttw.sh   /proxy-lttw.sh
-ADD proxy-ltpg.sh   /proxy-ltpg.sh
-ADD proxy-lttg.sh   /proxy-lttg.sh
-ADD proxy-mtt.sh    /proxy-mtt.sh
-ADD proxy-mtpw.sh   /proxy-mtpw.sh
-ADD proxy-mttw.sh   /proxy-mttw.sh
-ADD proxy-ttt.sh    /proxy-ttt.sh
-ADD proxy-ttpw.sh   /proxy-ttpw.sh
-ADD proxy-tttw.sh   /proxy-tttw.sh
+ADD proxy-lx.sh    /proxy-lx.sh
+ADD proxy-ls.sh    /proxy-ls.sh
+ADD proxy-ms.sh    /proxy-ms.sh
+ADD proxy-ts.sh    /proxy-ts.sh
+
+ADD proxy-lsg.sh   /proxy-lsg.sh
+ADD proxy-lss.sh   /proxy-lss.sh
+ADD proxy-lsw.sh   /proxy-lsw.sh
+ADD proxy-msw.sh   /proxy-msw.sh
+ADD proxy-tsw.sh   /proxy-tsw.sh
+
+ADD proxy-lpg.sh   /proxy-lpg.sh
+ADD proxy-lps.sh   /proxy-lps.sh
+ADD proxy-lpw.sh   /proxy-lpw.sh
+ADD proxy-mpw.sh   /proxy-mpw.sh
+ADD proxy-tpw.sh   /proxy-tpw.sh
+
 ADD status.sh       /status.sh
 ADD run.sh          /run.sh
 
