@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine3.20 as builder
+FROM golang:1.22-alpine3.20 AS builder
 
 ARG XRAY_VER='v1.8.23'
 ARG QREC_VER='4.1.1'
