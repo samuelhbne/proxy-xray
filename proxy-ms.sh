@@ -58,7 +58,7 @@ Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" \
-'. += {"network":"tcp", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}}' `
+'. += {"network":"tcp", "security":"tls", "tlsSettings":{"alpn":["h2,http/1.1"], "serverName":$serverName, "fingerprint":$fingerprint}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vmess", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `

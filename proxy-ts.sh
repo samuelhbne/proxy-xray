@@ -57,7 +57,7 @@ Jservers=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --arg passwd 
 '. += {"address":$host, "port":($port | tonumber), "password":$passwd}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" \
-'. += {"network":"tcp", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}}' `
+'. += {"network":"tcp", "security":"tls", "tlsSettings":{"alpn":["h2,http/1.1"], "serverName":$serverName, "fingerprint":$fingerprint}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jservers "${Jservers}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"trojan", "settings":{"servers":[$jservers]}, "streamSettings":$jstreamSettings }' `

@@ -59,7 +59,7 @@ Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"splithttp", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "splithttpSettings":{"path":$path}}' `
+'. += {"network":"splithttp", "security":"tls", "tlsSettings":{"alpn":["h2,http/1.1"], "serverName":$serverName, "fingerprint":$fingerprint}, "splithttpSettings":{"path":$path}}' `
 
 Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
