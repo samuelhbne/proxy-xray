@@ -5,6 +5,7 @@
 Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to set a Xray server ready first.
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
+![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-dev/badge.svg)
 
 ## How to start proxy-xray container
 
