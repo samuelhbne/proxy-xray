@@ -93,6 +93,7 @@ proxy-xray <connection-options>
     --tpw <TROJAN-PLN-WS option>      password@host:port:/wspath
     -d|--debug                        Start in debug mode with verbose output
     -i|--stdin                        Read config from stdin instead of auto generation
+    -j|--json                         '{"log":{"loglevel":"info"}' Json snippet to merge into the config
     --dns <upstream-DNS-ip>           Designated upstream DNS server IP, 1.1.1.1 will be applied by default
     --dns-local-cn                    Enable China-accessible domains to be resolved in China
     --domain-direct <domain-rule>     Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn

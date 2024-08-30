@@ -22,6 +22,7 @@ usage() {
     echo "    --tpw <TROJAN-PLN-WS option>      password@host:port:/wspath"
     echo "    -d|--debug                        Start in debug mode with verbose output"
     echo "    -i|--stdin                        Read config from stdin instead of auto generation"
+    echo "    -j|--json                         '{"log":{"loglevel":"info"}' Json snippet to merge into the config"
     echo "    --dns <upstream-DNS-ip>           Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
 #   echo "    --dns-local <local-conf-file>     Enable designated domain conf file. Like apple.china.conf"
     echo "    --dns-local-cn                    Enable China-accessible domains to be resolved in China"
@@ -38,7 +39,7 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o di --long lx:,ls:,ms:,ts:,lsg:,lss:,lsw:,msw:,tsw:,lpg:,lps:,lpw:,mpw:,tpw:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
+TEMP=`getopt -o j:di --long json:lx:,ls:,ms:,ts:,lsg:,lss:,lsw:,msw:,tsw:,lpg:,lps:,lpw:,mpw:,tpw:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
@@ -116,6 +117,10 @@ while true ; do
             export XRAY_LOCATION_ASSET=$2
             shift 2
             ;;
+        -j|--json)
+            INJECT+=("$2")
+            shift 2
+            ;;
         -i|--stdin)
             STDINCONF=1
             XRAYCFG=1
@@ -176,6 +181,18 @@ if [ "${DEBUG}" = "1" ]; then
     cat $XCONF |jq '.log.loglevel |="debug"' | sponge $XCONF
     cat $XCONF
 fi
+
+    if [ -n "${INJECT}" ]; then
+        for JSON_IN in "${INJECT[@]}"
+        do
+            echo "${JSON_IN}"|jq -ec >/tmp/merge.json
+            if [[ $? -ne 0 ]]; then
+                echo "Invalid json ${JSON_IN}"
+                exit 1
+            fi
+            jq -s '.[0] * .[1]' $XCONF /tmp/merge.json |sponge $XCONF
+        done
+    fi
 
 exec /usr/local/bin/xray -c $XCONF
 
