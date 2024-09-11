@@ -1,7 +1,8 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-lsg <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "VLESS-GRPC-TLS proxy builder"
+    >&2 echo "Usage: proxy-lgt <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then
@@ -17,11 +18,26 @@ for ext_opt in "${args[@]}"
 do
     kv=(`echo $ext_opt |tr '=' ' '`)
     case "${kv[0]}" in
-        s|serverName)
+        d|dest)
             serverName="${kv[1]}"
             ;;
         f|fingerprint)
             fingerprint="${kv[1]}"
+            ;;
+        flow)
+            flow="${kv[1]}"
+            ;;
+        pub|publicKey)
+            publicKey="${kv[1]}"
+            ;;
+        s|serverName)
+            serverName="${kv[1]}"
+            ;;
+        shortId)
+            shortId="${kv[1]}"
+            ;;
+        xtls)
+            flow="xtls-rprx-vision"
             ;;
     esac
 done
@@ -36,7 +52,7 @@ if [ -z "${serverName}" ]; then serverName=${host}; fi
 if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
 
 if [ -z "${id}" ]; then
-    >&2 echo "Error: uuid undefined."
+    >&2 echo "Error: id undefined."
     usage
     exit 1
 fi
@@ -53,20 +69,23 @@ fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
-Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
+# User settings
+Jusers=`jq -nc --arg uuid "${id}"  --arg flow "${flow}" '. += {"id":$uuid, "flow":$flow, "encryption":"none", "level":0}'`
 
-Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
+# Vnest settings
+Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"grpc", "security":"tls", "tlsSettings":{"alpn":["h2,http/1.1"], "serverName":$serverName, "fingerprint":$fingerprint}, "grpcSettings":{"serviceName":$path}}' `
+# Stream Settings
+JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg publicKey "${publicKey}" --arg shortId "${shortId}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+'. += {"network":"grpc", "security":"reality","realitySettings":{"publicKey":$publicKey,"serverName":$serverName,"shortId":$shortId,"fingerprint":$fingerprint},"grpcSettings":{"serviceName":$path}}' `
 
-Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
+Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
 Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
 Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 
-jroot=`echo '{}' | jq --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
+jroot=`jq -n --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
 '. += {"log":{"loglevel":"warning"}, "outbounds":[$jproxy, $jdirect, $jblocked]}' `
 
 echo "$jroot"

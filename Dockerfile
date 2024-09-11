@@ -1,6 +1,6 @@
-FROM golang:1.22-alpine3.20 AS builder
+FROM golang:1.23-alpine3.20 AS builder
 
-ARG XRAY_VER='v1.8.24'
+ARG XRAY_VER='v1.8.23'
 ARG QREC_VER='4.1.1'
 
 RUN apk add --no-cache bash git build-base wget
@@ -46,22 +46,26 @@ RUN apk --no-cache add bash openssl curl jq moreutils \
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
-ADD proxy-lx.sh    /proxy-lx.sh
-ADD proxy-ls.sh    /proxy-ls.sh
-ADD proxy-ms.sh    /proxy-ms.sh
-ADD proxy-ts.sh    /proxy-ts.sh
+ADD proxy-lgp.sh    /proxy-lgp.sh
+ADD proxy-lgr.sh    /proxy-lgr.sh
+ADD proxy-lgt.sh    /proxy-lgt.sh
 
-ADD proxy-lsg.sh   /proxy-lsg.sh
-ADD proxy-lss.sh   /proxy-lss.sh
-ADD proxy-lsw.sh   /proxy-lsw.sh
-ADD proxy-msw.sh   /proxy-msw.sh
-ADD proxy-tsw.sh   /proxy-tsw.sh
+ADD proxy-lsp.sh    /proxy-lsp.sh
+ADD proxy-lst.sh    /proxy-lst.sh
 
-ADD proxy-lpg.sh   /proxy-lpg.sh
-ADD proxy-lps.sh   /proxy-lps.sh
-ADD proxy-lpw.sh   /proxy-lpw.sh
-ADD proxy-mpw.sh   /proxy-mpw.sh
-ADD proxy-tpw.sh   /proxy-tpw.sh
+ADD proxy-ltr.sh    /proxy-ltr.sh
+ADD proxy-ltt.sh    /proxy-ltt.sh
+
+ADD proxy-lwp.sh    /proxy-lwp.sh
+ADD proxy-lwt.sh    /proxy-lwt.sh
+
+ADD proxy-mtt.sh    /proxy-mtt.sh
+ADD proxy-mwp.sh    /proxy-mwp.sh
+ADD proxy-mwt.sh    /proxy-mwt.sh
+
+ADD proxy-ttt.sh    /proxy-ttt.sh
+ADD proxy-twp.sh    /proxy-twp.sh
+ADD proxy-twt.sh    /proxy-twt.sh
 
 ADD status.sh       /status.sh
 ADD run.sh          /run.sh

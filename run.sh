@@ -6,20 +6,21 @@ XCONF=/tmp/proxy-xray.json
 
 usage() {
     echo "proxy-xray <connection-options>"
-    echo "    --lx  <VLESS-XTLS option>         id@host:port[,s=sniname.org]"
-    echo "    --ls  <VLESS-TLS option>          id@host:port[,s=sniname.org]"
-    echo "    --ms  <VMESS-TLS option>          id@host:port[,s=sniname.org]"
-    echo "    --ts  <TROJAN-TLS option>         password@host:port[,s=sniname.org]"
-    echo "    --lsg <VLESS-TLS-GRPC option>     id@host:port:svcname[,s=sniname.org]"
-    echo "    --lss <VLESS-TLS-SPLT option>     id@host:port:/webpath[,s=sniname.org]"
-    echo "    --lsw <VLESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]"
-    echo "    --msw <VMESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]"
-    echo "    --tsw <TROJAN-TLS-WS option>      password@host:port:/wspath[,s=sniname.org]"
-    echo "    --lpg <VLESS-PLN-GRPC option>     id@host:port:svcname"
-    echo "    --lps <VLESS-PLN-SPLT option>     id@host:port:/webpath"
-    echo "    --lpw <VLESS-PLN-WS option>       id@host:port:/wspath"
-    echo "    --mpw <VMESS-PLN-WS option>       id@host:port:/wspath"
-    echo "    --tpw <TROJAN-PLN-WS option>      password@host:port:/wspath"
+    echo "    --lgp <VLESS-GRPC-PLN option>     id@host:port:svcname"
+    echo "    --lgr <VLESS-GRPC-RLTY option>    id@host:port:svcname,d=dest.com,pub=xxxx[,shortId=abcd]"
+    echo "    --lgt <VLESS-GRPC-TLS option>     id@host:port:svcname[,s=sni.com]"
+    echo "    --lsp <VLESS-SPLT-PLN option>     id@host:port:/webpath"
+    echo "    --lst <VLESS-SPLT-TLS option>     id@host:port:/webpath[,s=sni.com]"
+    echo "    --ltr <VLESS-TCP-RLTY option>     id@host:port,d=dest.com,pub=xxxx[,shortId=abcd][,xtls]"
+    echo "    --ltt <VLESS-TCP-TLS option>      id@host:port[,s=sni.com][,xtls]"
+    echo "    --lwp <VLESS-WS-PLN option>       id@host:port:/wspath"
+    echo "    --lwt <VLESS-WS-TLS option>       id@host:port:/wspath[,s=sni.com]"
+    echo "    --mtt <VMESS-TCP-TLS option>      id@host:port[,s=sni.com]"
+    echo "    --mwp <VMESS-WS-PLN option>       id@host:port:/wspath"
+    echo "    --mwt <VMESS-WS-TLS option>       id@host:port:/wspath[,s=sni.com]"
+    echo "    --ttt <TROJAN-TCP-TLS option>     password@host:port[,s=sni.com]"
+    echo "    --twp <TROJAN-WS-PLN option>      password@host:port:/wspath"
+    echo "    --twt <TROJAN-WS-TLS option>      password@host:port:/wspath[,s=sni.com]"
     echo "    -d|--debug                        Start in debug mode with verbose output"
     echo "    -i|--stdin                        Read config from stdin instead of auto generation"
     echo "    -j|--json                         '{"log":{"loglevel":"info"}' Json snippet to merge into the config"
@@ -39,12 +40,12 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o j:di --long json:lx:,ls:,ms:,ts:,lsg:,lss:,lsw:,msw:,tsw:,lpg:,lps:,lpw:,mpw:,tpw:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path: -n "$0" -- $@`
+TEMP=`getopt -o j:di --long lgp:,lgr:,lgt:,lsp:,lst:,ltr:,ltt:,lwp:,lwt:,mtt:,mwp:,mwt:,ttt:,twp:,twt:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path:json: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
     case "$1" in
-        --lx|--ls|--ms|--ts|--lsg|--lss|--lsw|--msw|--tsw|--lpg|--lps|--lpw|--mpw|--tpw)
+        --lgp|--lgr|--lgt|--lsp|--lst|--ltr|--ltt|--lwp|--lwt|--mtt|--mwp|--mwt|--ttt|--twp|--twt)
             subcmd=`echo "$1"|tr -d "\-\-"`
             $DIR/proxy-${subcmd}.sh $2 >$XCONF
             if [ $? != 0 ]; then

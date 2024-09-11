@@ -1,7 +1,8 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "Usage: proxy-lpw <id@domain.com:80:/websocket>"
+    >&2 echo "VMESS-WS-PLAIN proxy builder"
+    >&2 echo "Usage: proxy-mpw <id@domain.com:443:/websocket>"
 }
 
 if [ -z "$1" ]; then
@@ -18,8 +19,11 @@ host="${options[0]}"
 port="${options[1]}"
 path="${options[2]}"
 
+if [ -z "${serverName}" ]; then serverName=${host}; fi
+if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
+
 if [ -z "${id}" ]; then
-    >&2 echo "Error: uuid undefined."
+    >&2 echo "Error: id undefined."
     usage
     exit 1
 fi
@@ -31,25 +35,25 @@ if [ -z "${host}" ]; then
 fi
 
 if [ -z "${port}" ]; then
-    port=80
+    port=443
 fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
-Jusers=`echo '{}' |jq --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
+Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
 
-Jvnext=`echo '{}' | jq --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
+Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`echo '{}' | jq --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
 '. += {"network":"ws", "security":"none", "wsSettings":{"path":$path}}' `
 
-Jproxy=`echo '{}' | jq --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
+Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
+'. += { "tag": "proxy", "protocol":"vmess", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
 Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
 Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
 
-jroot=`echo '{}' | jq --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
+jroot=`jq -n --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
 '. += {"log":{"loglevel":"warning"}, "outbounds":[$jproxy, $jdirect, $jblocked]}' `
 
 echo "$jroot"
