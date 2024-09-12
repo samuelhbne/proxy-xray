@@ -66,6 +66,12 @@ if [ -z "${port}" ]; then
     port=443
 fi
 
+if [ -z "${publicKey}" ]; then
+    >&2 echo "Error: publicKey undefined."
+    usage
+    exit 1
+fi
+
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
 # User settings

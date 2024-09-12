@@ -77,33 +77,36 @@ Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls
 ```shell
 $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
-    --lx  <VLESS-XTLS option>         id@host:port[,s=sniname.org]
-    --ls  <VLESS-TLS option>          id@host:port[,s=sniname.org]
-    --ms  <VMESS-TLS option>          id@host:port[,s=sniname.org]
-    --ts  <TROJAN-TLS option>         password@host:port[,s=sniname.org]
-    --lsg <VLESS-TLS-GRPC option>     id@host:port:svcname[,s=sniname.org]
-    --lss <VLESS-TLS-SPLT option>     id@host:port:/webpath[,s=sniname.org]
-    --lsw <VLESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]
-    --msw <VMESS-TLS-WS option>       id@host:port:/wspath[,s=sniname.org]
-    --tsw <TROJAN-TLS-WS option>      password@host:port:/wspath[,s=sniname.org]
-    --lpg <VLESS-PLN-GRPC option>     id@host:port:svcname
-    --lps <VLESS-PLN-SPLT option>     id@host:port:/webpath
-    --lpw <VLESS-PLN-WS option>       id@host:port:/wspath
-    --mpw <VMESS-PLN-WS option>       id@host:port:/wspath
-    --tpw <TROJAN-PLN-WS option>      password@host:port:/wspath
-    -d|--debug                        Start in debug mode with verbose output
-    -i|--stdin                        Read config from stdin instead of auto generation
-    -j|--json                         '{"log":{"loglevel":"info"}' Json snippet to merge into the config
-    --dns <upstream-DNS-ip>           Designated upstream DNS server IP, 1.1.1.1 will be applied by default
-    --dns-local-cn                    Enable China-accessible domains to be resolved in China
-    --domain-direct <domain-rule>     Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
-    --domain-proxy  <domain-rule>     Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
-    --domain-block  <domain-rule>     Add a domain rule for block routing, like geosite:category-ads-all
-    --ip-direct     <ip-rule>         Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
-    --ip-proxy      <ip-rule>         Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
-    --ip-block      <ip-rule>         Add a ip-addr rule for block routing, like geoip:private
-    --cn-direct                       Add routing rules to avoid domains and IPs located in China being proxied
-    --rules-path    <rules-dir-path>  Folder path contents geoip.dat, geosite.dat and other rule files
+    --lgp  <VLESS-GRPC-PLN option>        id@host:port:svcname
+    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=dest.com,pub=xxxx[,shortId=abcd]
+    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname[,s=sni.com]
+    --lsp  <VLESS-SPLT-PLN option>        id@host:port:/webpath
+    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,s=sni.com]
+    --ltr  <VLESS-TCP-RLTY option>        id@host:port,d=dest.com,pub=xxxx[,shortId=abcd][,xtls]
+    --ltrx <VLESS-TCP-RLTY-XTLS option>   id@host:port,d=dest.com,pub=xxxx[,shortId=abcd]
+    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sni.com][,xtls]
+    --lttx <VLESS-TCP-TLS-XTLS option>    id@host:port[,s=sni.com]
+    --lwp  <VLESS-WS-PLN option>          id@host:port:/wspath
+    --lwt  <VLESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]
+    --mtt  <VMESS-TCP-TLS option>         id@host:port[,s=sni.com]
+    --mwp  <VMESS-WS-PLN option>          id@host:port:/wspath
+    --mwt  <VMESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]
+    --ttt  <TROJAN-TCP-TLS option>        password@host:port[,s=sni.com]
+    --twp  <TROJAN-WS-PLN option>         password@host:port:/wspath
+    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath[,s=sni.com]
+    -d|--debug                            Start in debug mode with verbose output
+    -i|--stdin                            Read config from stdin instead of auto generation
+    -j|--json                             Json snippet to merge into the config. Say '{log:{loglevel:info}'
+    --dns  <upstream-DNS-ip>              Designated upstream DNS server IP, 1.1.1.1 will be applied by default
+    --dns-local-cn                        Enable China-accessible domains to be resolved in China
+    --domain-direct <domain-rule>         Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
+    --domain-proxy  <domain-rule>         Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
+    --domain-block  <domain-rule>         Add a domain rule for block routing, like geosite:category-ads-all
+    --ip-direct     <ip-rule>             Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
+    --ip-proxy      <ip-rule>             Add a ip-addr rule for proxy routing, like 1.1.1.1/32 or geoip:netflix
+    --ip-block      <ip-rule>             Add a ip-addr rule for block routing, like geoip:private
+    --cn-direct                           Add routing rules to avoid domains and IPs located in China being proxied
+    --rules-path    <rules-dir-path>      Folder path contents geoip.dat, geosite.dat and other rule files
 ```
 
 ## How to stop and remove the running container
@@ -117,37 +120,37 @@ $ docker rm proxy-xray
 
 ## More complex examples
 
-### 1. Connect to Vless+TCP+XTLS server
+### 1. Connect to Vless-TCP-TLS-XTLS server
 
 The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All destination sites and IP located in China will not been proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
---lx myid@12.34.56.78:443,serverName=mydomain.duckdns.org --cn-direct
+--lttx myid@12.34.56.78:443,serverName=mydomain.duckdns.org --cn-direct
 ```
 
-### 2. Connect to Vless+TCP+TLS+Websocket server
+### 2. Connect to Vless-Websocket-TLS server
 
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will be proxied. All sites located in China will not be proxied.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray \
---lsw myid@mydomain.duckdns.org:443:/websocket \
+--lwt myid@mydomain.duckdns.org:443:/websocket \
 --domain-proxy geosite:apple-cn --domain-direct geosite:geolocation-cn
 ```
 
-### 3. Connect to Vless+TCP+TLS+gRPC server
+### 3. Connect to Vless-gRPC-TLS server
 
-The following instruction connect to Xray server port 443 in Vless+TCP+TLS+gRPC mode with given password. All sites not located in China will be proxied. You need to escape '!' character in --domain-proxy parameter to be accepted by shell.
+The following instruction connect to Xray server port 443 in Vless-gRPC-TLS mode with given password. All sites not located in China will be proxied. You need to escape '!' character in --domain-proxy parameter to be accepted by shell.
 
 ```shell
 $ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray \
---lsg myid@mydomain.duckdns.org:443:gsvc --domain-proxy geosite:geolocation-\!cn
+--lgt myid@mydomain.duckdns.org:443:gsvc --domain-proxy geosite:geolocation-\!cn
 ```
 
-### 4. Connect to TCP+TLS+Trojan server
+### 4. Connect to TCP-Trojan-TLS server
 
-The following instruction connect to Xray server port 443 in TCP+TLS+Trojan mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directly.
+The following instruction connect to Xray server port 443 in TCP-Trojan-TLS mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directly.
 
 ```shell
 $ mkdir -p /tmp/rules
@@ -156,7 +159,7 @@ $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/late
 $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 $ wget -c -t3 -T30 https://github.com/SamadiPour/iran-hosted-domains/releases/download/202108210015/iran.dat
 $ docker run --name proxy-xray -p 1080:1080 -v /tmp/rules:/opt/rules -d samuelhbne/proxy-xray \
---ts trojan_pass@mydomain.duckdns.org:8443 \
+--ttt trojan_pass@mydomain.duckdns.org:8443 \
 --rules-path /opt/rules --domain-direct ext:iran.dat:ir --ip-direct geoip:ir
 ```
 
@@ -166,7 +169,7 @@ The following instruction start proxy-xray in debug mode. Output Xray config fil
 
 ```shell
 $ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
---msw myid@mydomain.duckdns.org:443:/websocket --debug
+--mwt myid@mydomain.duckdns.org:443:/websocket --debug
 ```
 
 ### NOTE 4

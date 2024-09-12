@@ -1,29 +1,29 @@
 FROM golang:1.23-alpine3.20 AS builder
 
-ARG XRAY_VER='v1.8.23'
+ARG XRAY_VER='v1.8.24'
 ARG QREC_VER='4.1.1'
 
-RUN apk add --no-cache bash git build-base wget
+RUN apk add --no-cache bash git build-base curl
 
-RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
-RUN cd /tmp; wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+WORKDIR /go/src/XTLS/Xray-core
+RUN git clone https://github.com/XTLS/Xray-core.git . && \
+    git checkout ${XRAY_VER} && \
+    go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
-RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
-RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
-RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
-RUN cd /tmp; wget -c -t3 -T30 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
-
-RUN cd /tmp; wget -c -t3 -T30 https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
+RUN cd /tmp; curl -O https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
     tar xvf qrencode-${QREC_VER}.tar.gz && \
     cd qrencode-${QREC_VER} && \
     ./configure --without-png && \
     make && \
     cp -a qrencode /tmp/
 
-WORKDIR /go/src/XTLS/Xray-core
-RUN git clone https://github.com/XTLS/Xray-core.git . && \
-    git checkout ${XRAY_VER} && \
-    go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
+RUN cd /tmp; curl -O  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+RUN cd /tmp; curl -O  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+
+RUN cd /tmp; curl -O  https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
+RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
+RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
 
 FROM alpine:3.20
