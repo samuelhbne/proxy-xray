@@ -10,20 +10,20 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     git checkout ${XRAY_VER} && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
-RUN cd /tmp; curl -O https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
+RUN cd /tmp; curl -OL https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
     tar xvf qrencode-${QREC_VER}.tar.gz && \
     cd qrencode-${QREC_VER} && \
     ./configure --without-png && \
     make && \
     cp -a qrencode /tmp/
 
-RUN cd /tmp; curl -O  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
-RUN cd /tmp; curl -O  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+RUN cd /tmp; curl -OL  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+RUN cd /tmp; curl -OL  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 
-RUN cd /tmp; curl -O  https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
-RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
-RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
-RUN cd /tmp; curl -O https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
+RUN cd /tmp; curl -OL  https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+RUN cd /tmp; curl -OL https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
+RUN cd /tmp; curl -OL https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
+RUN cd /tmp; curl -OL https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
 
 FROM alpine:3.20
