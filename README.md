@@ -18,7 +18,7 @@ The following command will:
 
 ```shell
 $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
--d samuelhbne/proxy-xray --lx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
+-d samuelhbne/proxy-xray --lttx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
 ...
 ```
 
