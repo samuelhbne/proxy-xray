@@ -17,7 +17,7 @@ The following command will:
 4. Enable China-accessible domains to be resolved in China
 
 ```shell
-$ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 65353:53/udp \
+$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 65353:53/udp \
 -d samuelhbne/proxy-xray --lttx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
 ...
 ```
@@ -25,8 +25,8 @@ $ docker run --name proxy-xray -p 2080:1080 -p 2080:1080/udp -p 8223:8123 -p 653
 ### NOTE 1
 
 - Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
-- (optional) Please replace 2080 (-p 2080:1080, -p 2080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
-- (optional) Please replace 8223 (-p 8223:8123) with the port number you set for HTTP proxy TCP listerning.
+- (optional) Please replace 1080 (-p 1080:1080, -p 1080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
+- (optional) Please replace 8123 (-p 8123:8123) with the port number you set for HTTP proxy TCP listerning.
 - (optional) Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
 - Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
 
