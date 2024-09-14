@@ -23,16 +23,24 @@ case "${PROTOCOL}" in
         XHOST=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].address'`
         XPORT=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].port'`
         WPATH=`cat $XCONF | jq -r '.outbounds[0].streamSettings.wsSettings.path'`
+        SPATH=`cat $XCONF | jq -r '.outbounds[0].streamSettings.splithttpSettings.path'`
         SVCNAME=`cat $XCONF | jq -r '.outbounds[0].streamSettings.grpcSettings.serviceName'`
         UUID=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].id'`
         XENCRYPT=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].encryption'`
         XSEC=`cat $XCONF | jq -r '.outbounds[0].streamSettings.security'`
+        RPBK=`cat $XCONF | jq -r '.outbounds[0].streamSettings.realitySettings.publicKey'`
+        RSNI=`cat $XCONF | jq -r '.outbounds[0].streamSettings.realitySettings.serverName'`
+        RSID=`cat $XCONF | jq -r '.outbounds[0].streamSettings.realitySettings.shortId'`
         XNETWORK=`cat $XCONF | jq -r '.outbounds[0].streamSettings.network'`
         XFLOW=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].flow'`
         XURL="${PROTOCOL}://${UUID}@${XHOST}:${XPORT}?security=${XSEC}&type=${XNETWORK}"
         if [ "${XFLOW}" != "null" ]; then XURL="${XURL}&flow=${XFLOW}"; fi
         if [ "${WPATH}" != "null" ]; then XURL="${XURL}&path=$(urlencode ${WPATH})"; fi
+        if [ "${SPATH}" != "null" ]; then XURL="${XURL}&path=$(urlencode ${SPATH})"; fi
         if [ "${SVCNAME}" != "null" ]; then XURL="${XURL}&serviceName=${SVCNAME}&mode=gun"; fi
+        if [ "${RPBK}" != "null" ]; then XURL="${XURL}&pbk=${RPBK}"; fi
+        if [ "${RSNI}" != "null" ]; then XURL="${XURL}&sni=${RSNI}"; fi
+        if [ "${RSID}" != "null" ]; then XURL="${XURL}&sid=${RSID}"; fi
         XURL="${XURL}#${XHOST}:${XPORT}"
         ;;
     vmess)

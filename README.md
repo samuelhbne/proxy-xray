@@ -7,32 +7,27 @@ Please have a look over the sibling project [server-xray](https://github.com/sam
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-dev/badge.svg)
 
-## How to start proxy-xray container
+## Quick start
 
-The following command will:
-
-1. Export SOCKS, HTTP and DNS service ports of proxy-xray
-2. Start proxy-xray on VLESS-TCP-XTLS mode connect to mydomain.duckdns.org port 443 with user-id "myid"
-3. All destination sites and IP in China will not been proxied.
-4. Enable China-accessible domains to be resolved in China
+The following command will create a VLESS-TCP-TLS-XTLS client connecting to mydomain.com  port 443 with given uid. Expose Socks-proxy port 1080 as a local service.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 65353:53/udp \
--d samuelhbne/proxy-xray --lttx myid@mydomain.duckdns.org:443 --cn-direct --dns-local-cn
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttx myid@mydomain.com:443
 ...
 ```
 
-### NOTE 1
+The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not been proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
 
-- Please replace "mydomain.duckdns.org" with the Xray server domain you want to connect
-- (optional) Please replace 1080 (-p 1080:1080, -p 1080:1080/udp) with the port number you set for SOCKS5 proxy TCP listerning.
-- (optional) Please replace 8123 (-p 8123:8123) with the port number you set for HTTP proxy TCP listerning.
-- (optional) Please replace 65353 (-p 65353:53/udp) with the port number you set for DNS UDP listerning.
-- Please replace "myid" with the id string or standard UUID (like "MyMobile or "b77af52c-2a93-4b3e-8538-f9f91114ba00") you set for Xray server access.
+```shell
+$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
+-d samuelhbne/proxy-xray --cn-direct --dns-local-cn \
+--ltrx myid@mydomain.com:443,d=yahoo.com,pub=qAaJnTE_zYWNuXuIdlpIfSt5beveuV4PyBaP76WE7jU
+...
+```
 
-### NOTE 2
+** NOTE **
 
-Name query for sites outside China like twitter.com will be always forwarded to designated DNS like 1.1.1.1 to avoid the contaminated result. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise dnsmasq will act as a forward only cache server.
+Name query for sites outside China like twitter.com will be always forwarded to designated DNS (1.1.1.1 by default) to avoid the contaminated results. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise all queries will be forwarded to designated DNS server.
 
 ## How to verify if proxy tunnel is working properly
 
@@ -55,7 +50,7 @@ $ docker exec proxy-xray proxychains whois 104.244.42.193|grep OrgId
 OrgId:          TWITT
 ```
 
-### NOTE 3
+** NOTE **
 
 - curl should return the Xray server address given above if SOCKS5/HTTP proxy works properly.
 - dig should return resolved IP recorders of twitter.com if DNS server works properly.
@@ -65,7 +60,7 @@ OrgId:          TWITT
 ## How to get the XRay QR code for mobile connection
 
 ```shell
-$ docker exec -t proxy-xray /status.sh
+$ docker exec -t proxy-xray /status
 VPS-Server: mydomain.duckdns.org
 Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
 ```
@@ -109,7 +104,7 @@ proxy-xray <connection-options>
     --rules-path    <rules-dir-path>      Folder path contents geoip.dat, geosite.dat and other rule files
 ```
 
-## How to stop and remove the running container
+## How to stop and remove the running xray-proxy container
 
 ```shell
 $ docker stop proxy-xray

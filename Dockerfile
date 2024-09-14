@@ -10,12 +10,14 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     git checkout ${XRAY_VER} && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
-RUN cd /tmp; curl -sSLO https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
+RUN cd /tmp; \
+    curl -sSLO https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
     tar xvf qrencode-${QREC_VER}.tar.gz && \
     cd qrencode-${QREC_VER} && \
     ./configure --without-png && \
-    make && \
-    cp -a qrencode /tmp/
+    make install
+
+RUN cd /usr/local; tar zcvf /tmp/qrencode.tar.gz bin lib share
 
 RUN cd /tmp; curl -sSLO  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 RUN cd /tmp; curl -sSLO  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
@@ -39,7 +41,9 @@ COPY --from=builder /tmp/google.china.conf /etc/dnsmasq.disable/
 COPY --from=builder /tmp/bogus-nxdomain.china.conf /etc/dnsmasq.disable/
 COPY --from=builder /tmp/accelerated-domains.china.conf /etc/dnsmasq.disable/
 
-COPY --from=builder /tmp/qrencode /usr/local/bin/
+COPY --from=builder /tmp/qrencode.tar.gz /tmp/
+RUN cd /usr/local && tar xvf /tmp/qrencode.tar.gz
+RUN rm /tmp/qrencode.tar.gz
 
 RUN apk --no-cache add bash openssl curl jq moreutils \
     whois dnsmasq ca-certificates proxychains-ng
@@ -67,9 +71,10 @@ ADD proxy-ttt.sh    /proxy-ttt.sh
 ADD proxy-twp.sh    /proxy-twp.sh
 ADD proxy-twt.sh    /proxy-twt.sh
 
-ADD status.sh       /status.sh
+ADD status.sh       /status
 ADD run.sh          /run.sh
 
 RUN chmod 755 /*.sh
+RUN chmod 755 /status
 
 ENTRYPOINT ["/run.sh"]
