@@ -200,3 +200,5 @@ Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for the [v2ray-rules-d
 Thanks to [felixonmars](https://github.com/felixonmars) for the [dnsmasq-china-list](https://github.com/felixonmars/dnsmasq-china-list) project.
 
 Thanks to [SamadiPour](https://github.com/SamadiPour) for the [iran-hosted-domains](https://github.com/SamadiPour/iran-hosted-domains) project.
+
+Thanks to [FUKUCHI Kentaro](https://fukuchi.org/index.html.en) for the [libqrencode](https://fukuchi.org/works/qrencode/) project.
