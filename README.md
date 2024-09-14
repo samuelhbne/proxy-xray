@@ -65,7 +65,7 @@ VPS-Server: mydomain.duckdns.org
 Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
 ```
 
-![QR code example](https://github.com/samuelhbne/proxy-xray/blob/master/images/qr-xray.png)
+![QR code example](https://github.com/samuelhbne/proxy-xray/blob/master/images/qr-xray4.png)
 
 ## Full usage
 
