@@ -29,7 +29,7 @@ usage() {
     echo "    --dns  <upstream-DNS-ip>              Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
 #   echo "    --dns-local <local-conf-file>         Enable designated domain conf file. Like apple.china.conf"
     echo "    --dns-local-cn                        Enable China-accessible domains to be resolved in China"
-    echo "    --domain-direct <domain-rule>         Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn"
+    echo "    --domain-direct <domain-rule>         Add a domain rule for direct routing, like geosite:geosite:geolocation-cn"
     echo "    --domain-proxy  <domain-rule>         Add a domain rule for proxy routing, like twitter.com or geosite:google-cn"
     echo "    --domain-block  <domain-rule>         Add a domain rule for block routing, like geosite:category-ads-all"
     echo "    --ip-direct     <ip-rule>             Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn"

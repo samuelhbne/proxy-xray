@@ -1,8 +1,8 @@
 # proxy-xray
 
-[Xray](https://github.com/XTLS/Xray-core) is a low detectable VPN. proxy-xray is a Xray client container that runs Xray with config file generated from command line options directly hence remove the necessity of Xray config modification.
+[Xray-Core](https://github.com/XTLS/Xray-core) is a low detectable VPN. proxy-xray is a Xray client container that runs Xray with config file generated from command line options directly hence remove the necessity of Xray config modification.
 
-Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to set a Xray server ready first.
+Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to setup a Xray-Core server first.
 
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-latest/badge.svg)
 ![docker-build](https://github.com/samuelhbne/proxy-xray/workflows/docker-buildx-dev/badge.svg)
@@ -38,7 +38,7 @@ $ curl -sSx socks5h://127.0.0.1:1080 https://checkip.amazonaws.com
 $ curl -sSx http://127.0.0.1:8123 https://checkip.amazonaws.com
 12.34.56.78
 
-$ dig +short @127.0.0.1 -p 65353 twitter.com
+$ dig +short @127.0.0.1 -p 53 twitter.com
 104.244.42.193
 104.244.42.129
 
@@ -94,7 +94,7 @@ proxy-xray <connection-options>
     -j|--json                             Json snippet to merge into the config. Say '{log:{loglevel:info}'
     --dns  <upstream-DNS-ip>              Designated upstream DNS server IP, 1.1.1.1 will be applied by default
     --dns-local-cn                        Enable China-accessible domains to be resolved in China
-    --domain-direct <domain-rule>         Add a domain rule for direct routing, likegeosite:geosite:geolocation-cn
+    --domain-direct <domain-rule>         Add a domain rule for direct routing, like geosite:geosite:geolocation-cn
     --domain-proxy  <domain-rule>         Add a domain rule for proxy routing, like twitter.com or geosite:google-cn
     --domain-block  <domain-rule>         Add a domain rule for block routing, like geosite:category-ads-all
     --ip-direct     <ip-rule>             Add a ip-addr rule for direct routing, like 114.114.114.114/32 or geoip:cn
@@ -193,7 +193,7 @@ docker buildx build --platform=linux/amd64 --output type=docker -t samuelhbne/pr
 
 ## Credits
 
-Thanks to [RPRX](https://github.com/RPRX) for the [Xray](https://github.com/XTLS/Xray-core) project.
+Thanks to [RPRX](https://github.com/RPRX) for the [Xray-core](https://github.com/XTLS/Xray-core) project.
 
 Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for the [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project.
 
