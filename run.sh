@@ -7,22 +7,23 @@ XCONF=/tmp/proxy-xray.json
 usage() {
     echo "proxy-xray <connection-options>"
     echo "    --lgp  <VLESS-GRPC-PLN option>        id@host:port:svcname"
-    echo "    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=dest.com,pub=xxxx[,shortId=abcd]"
-    echo "    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname[,s=sni.com]"
+    echo "    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=fakedest.com,pub=xxxx[,shortId=abcd]"
+    echo "    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname"
     echo "    --lsp  <VLESS-SPLT-PLN option>        id@host:port:/webpath"
-    echo "    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,s=sni.com][,alpn=h3]"
+    echo "    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,alpn=h3]"
+    echo "    --lst3 <VLESS-SPLT-TLS-HTTP3 option>  id@host:port:/webpath"
     echo "    --ltr  <VLESS-TCP-RLTY option>        id@host:port,d=dest.com,pub=xxxx[,shortId=abcd][,xtls]"
     echo "    --ltrx <VLESS-TCP-RLTY-XTLS option>   id@host:port,d=dest.com,pub=xxxx[,shortId=abcd]"
-    echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sni.com][,xtls]"
-    echo "    --lttx <VLESS-TCP-TLS-XTLS option>    id@host:port[,s=sni.com]"
+    echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port[,xtls]"
+    echo "    --lttx <VLESS-TCP-TLS-XTLS option>    id@host:port"
     echo "    --lwp  <VLESS-WS-PLN option>          id@host:port:/wspath"
-    echo "    --lwt  <VLESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]"
-    echo "    --mtt  <VMESS-TCP-TLS option>         id@host:port[,s=sni.com]"
+    echo "    --lwt  <VLESS-WS-TLS option>          id@host:port:/wspath"
+    echo "    --mtt  <VMESS-TCP-TLS option>         id@host:port"
     echo "    --mwp  <VMESS-WS-PLN option>          id@host:port:/wspath"
-    echo "    --mwt  <VMESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]"
-    echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port[,s=sni.com]"
+    echo "    --mwt  <VMESS-WS-TLS option>          id@host:port:/wspath"
+    echo "    --ttt  <TROJAN-TCP-TLS option>        password@host:port"
     echo "    --twp  <TROJAN-WS-PLN option>         password@host:port:/wspath"
-    echo "    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath[,s=sni.com]"
+    echo "    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath"
     echo "    -d|--debug                            Start in debug mode with verbose output"
     echo "    -i|--stdin                            Read config from stdin instead of auto generation"
     echo "    -j|--json                             Json snippet to merge into the config. Say '{"log":{"loglevel":"info"}'"
@@ -42,7 +43,7 @@ usage() {
 
 Jrules='{"rules":[]}'
 
-TEMP=`getopt -o j:di --long lgp:,lgr:,lgt:,lsp:,lst:,ltr:,ltrx:,ltt:,lttx:,lwp:,lwt:,mtt:,mwp:,mwt:,ttt:,twp:,twt:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path:json: -n "$0" -- $@`
+TEMP=`getopt -o j:di --long lgp:,lgr:,lgt:,lsp:,lst:,lst3:,ltr:,ltrx:,ltt:,lttx:,lwp:,lwt:,mtt:,mwp:,mwt:,ttt:,twp:,twt:,stdin,debug,dns:,dns-local:,dns-local-cn,domain-direct:,domain-proxy:,domain-block:,ip-direct:,ip-proxy:,ip-block:,cn-direct,rules-path:json: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 eval set -- "$TEMP"
 while true ; do
@@ -59,9 +60,23 @@ while true ; do
             shift 2
             ;;
         --ltrx|--lttx)
-            # Alias options
+            # Alias of --ltr|ltt options
             subcmd=`echo $1|tr -d '\-\-'|tr -d x`
             $DIR/proxy-${subcmd}.sh $2,xtls >$XCONF
+            if [ $? != 0 ]; then
+                echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
+                exit 2
+            else
+                XRAYCFG=1
+            fi
+            shift 2
+            ;;
+        --lst3)
+            # Alias of --lst options
+            # splitHTTP is the only option for H3 support from Xray-Core so far.
+            subcmd=`echo $1|tr -d '\-\-'|tr -d 3`
+            echo $subcmd
+            $DIR/proxy-${subcmd}.sh $2,alpn=h3 >$XCONF
             if [ $? != 0 ]; then
                 echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
                 exit 2

@@ -16,10 +16,10 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttx myid
 ...
 ```
 
-The following command will create a VLESS-SplitHTTP-TLS-HTTP3 client connecting to mydomain.com port 443 with given uid. Expose Socks-proxy port 1080 as a local service.
+The following command will create a VLESS-SplitHTTP-TLS-HTTP3 client connecting to mydomain.com port 443 with given uid and webpath. Expose Socks-proxy port 1080 as a local service.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lst myid@mydomain.com:443:/split0,alpn=h3
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lsts myid@mydomain.com:443:/split0
 ...
 ```
 
@@ -80,22 +80,23 @@ Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls
 $ docker run --rm samuelhbne/proxy-xray
 proxy-xray <connection-options>
     --lgp  <VLESS-GRPC-PLN option>        id@host:port:svcname
-    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=dest.com,pub=xxxx[,shortId=abcd]
-    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname[,s=sni.com]
+    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=fakedest.com,pub=xxxx[,shortId=abcd]
+    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname
     --lsp  <VLESS-SPLT-PLN option>        id@host:port:/webpath
-    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,s=sni.com]
+    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,alpn=h3]
+    --lst3 <VLESS-SPLT-TLS-HTTP3 option>  id@host:port:/webpath
     --ltr  <VLESS-TCP-RLTY option>        id@host:port,d=dest.com,pub=xxxx[,shortId=abcd][,xtls]
     --ltrx <VLESS-TCP-RLTY-XTLS option>   id@host:port,d=dest.com,pub=xxxx[,shortId=abcd]
-    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sni.com][,xtls]
-    --lttx <VLESS-TCP-TLS-XTLS option>    id@host:port[,s=sni.com]
+    --ltt  <VLESS-TCP-TLS option>         id@host:port[,xtls]
+    --lttx <VLESS-TCP-TLS-XTLS option>    id@host:port
     --lwp  <VLESS-WS-PLN option>          id@host:port:/wspath
-    --lwt  <VLESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]
-    --mtt  <VMESS-TCP-TLS option>         id@host:port[,s=sni.com]
+    --lwt  <VLESS-WS-TLS option>          id@host:port:/wspath
+    --mtt  <VMESS-TCP-TLS option>         id@host:port
     --mwp  <VMESS-WS-PLN option>          id@host:port:/wspath
-    --mwt  <VMESS-WS-TLS option>          id@host:port:/wspath[,s=sni.com]
-    --ttt  <TROJAN-TCP-TLS option>        password@host:port[,s=sni.com]
+    --mwt  <VMESS-WS-TLS option>          id@host:port:/wspath
+    --ttt  <TROJAN-TCP-TLS option>        password@host:port
     --twp  <TROJAN-WS-PLN option>         password@host:port:/wspath
-    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath[,s=sni.com]
+    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath
     -d|--debug                            Start in debug mode with verbose output
     -i|--stdin                            Read config from stdin instead of auto generation
     -j|--json                             Json snippet to merge into the config. Say '{log:{loglevel:info}'
