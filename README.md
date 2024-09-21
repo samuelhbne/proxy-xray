@@ -1,6 +1,6 @@
 # proxy-xray
 
-[Xray-Core](https://github.com/XTLS/Xray-core) is a low detectable VPN. proxy-xray is a Xray client container that runs Xray with config file generated from command line options directly hence remove the necessity of Xray config modification.
+[Xray-Core](https://github.com/XTLS/Xray-core) is a low detectable VPN. proxy-xray is a Xray-Core client container that runs Xray-Core with config file generated from command line options automatically hence remove the necessity of config file modification.
 
 Please have a look over the sibling project [server-xray](https://github.com/samuelhbne/server-xray) if you'd like to setup a Xray-Core server first.
 
@@ -19,7 +19,7 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttx myid
 The following command will create a VLESS-SplitHTTP-TLS-HTTP3 client connecting to mydomain.com port 443 with given uid and webpath. Expose Socks-proxy port 1080 as a local service.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lsts myid@mydomain.com:443:/split0
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lst3 myid@mydomain.com:443:/split0
 ...
 ```
 
