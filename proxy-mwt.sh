@@ -2,7 +2,7 @@
 
 usage() {
     >&2 echo "VMESS-WS-TLS proxy builder"
-    >&2 echo "Usage: proxy-msw <id@domain.com:443:/websocket>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "Usage: proxy-mwt <id@domain.com:443:/websocket>[,fingerprint=safari]"
 }
 
 if [ -z "$1" ]; then
@@ -11,13 +11,16 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# id@domain.com:443:/websocket,serverName=x.org,fingerprint=safari
+# id@domain.com:443:/websocket,fingerprint=safari
 args=(`echo $1 |tr ',' ' '`)
 dest="${args[0]}"
 for ext_opt in "${args[@]}"
 do
     kv=(`echo $ext_opt |tr '=' ' '`)
     case "${kv[0]}" in
+        a|alpn)
+            ALPN+=("${kv[1]}")
+            ;;
         s|serverName)
             serverName="${kv[1]}"
             ;;
@@ -33,7 +36,6 @@ host="${options[0]}"
 port="${options[1]}"
 path="${options[2]}"
 
-if [ -z "${serverName}" ]; then serverName=${host}; fi
 if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
 
 if [ -z "${id}" ]; then
@@ -54,21 +56,29 @@ fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
-Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
+# User settings
+Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid,"encryption":"none","level":0}'`
 
+# Vnext settings
 Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
-'. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
+'. += {"address":$host,"port":($port | tonumber),"users":[$juser]}' `
 
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"ws", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "wsSettings":{"path":$path}}' `
+# Stream Settings
+Jalpn='[]'
+for alpn in "${ALPN[@]}"
+do
+    Jalpn=`echo $Jalpn | jq -c --arg alpn "${alpn}" '. +=[$alpn]'`
+done
+JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" --argjson jalpn "${Jalpn}" \
+'. += {"network":"ws","security":"tls","tlsSettings":{"serverName":$serverName,"fingerprint":$fingerprint,"alpn":$jalpn},"wsSettings":{"path":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "tag": "proxy", "protocol":"vmess", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `
-Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
-Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
+'. += { "tag":"proxy","protocol":"vmess","settings":{"vnext":[$jvnext]},"streamSettings":$jstreamSettings }' `
+Jdirect='{"tag":"direct","protocol":"freedom","settings":{}}'
+Jblocked='{"tag":"blocked","protocol":"blackhole","settings":{}}'
 
 jroot=`jq -n --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
-'. += {"log":{"loglevel":"warning"}, "outbounds":[$jproxy, $jdirect, $jblocked]}' `
+'. += {"log":{"loglevel":"warning"},"outbounds":[$jproxy,$jdirect,$jblocked]}' `
 
 echo "$jroot"
 exit 0
