@@ -2,7 +2,7 @@
 
 usage() {
     >&2 echo "VLESS-GRPC-TLS proxy builder"
-    >&2 echo "Usage: proxy-lgt <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari]"
+    >&2 echo "Usage: proxy-lgt <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari][,alpn=h3]"
 }
 
 if [ -z "$1" ]; then
@@ -18,6 +18,9 @@ for ext_opt in "${args[@]}"
 do
     kv=(`echo $ext_opt |tr '=' ' '`)
     case "${kv[0]}" in
+        a|alpn)
+            ALPN+=("${kv[1]}")
+            ;;
         s|serverName)
             serverName="${kv[1]}"
             ;;
@@ -32,9 +35,6 @@ options=(`echo ${options[1]} |tr ':' ' '`)
 host="${options[0]}"
 port="${options[1]}"
 path="${options[2]}"
-
-if [ -z "${serverName}" ]; then serverName=${host}; fi
-if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
 
 if [ -z "${id}" ]; then
     >&2 echo "Error: id undefined."
@@ -62,8 +62,14 @@ Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Juse
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
 # Stream Settings
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
-'. += {"network":"grpc", "security":"tls", "tlsSettings":{"serverName":$serverName, "fingerprint":$fingerprint}, "grpcSettings":{"serviceName":$path}}' `
+Jalpn='[]'
+for alpn in "${ALPN[@]}"
+do
+    Jalpn=`echo $Jalpn | jq -c --arg alpn "${alpn}" '. +=[$alpn]'`
+done
+
+JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" --argjson jalpn "${Jalpn}" \
+'. += {"network":"grpc","security":"tls","tlsSettings":{"serverName":$serverName,"fingerprint":$fingerprint,"alpn":$jalpn},"grpcSettings":{"serviceName":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag": "proxy", "protocol":"vless", "settings":{"vnext":[$jvnext]}, "streamSettings":$jstreamSettings }' `

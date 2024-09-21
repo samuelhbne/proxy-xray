@@ -10,7 +10,7 @@ usage() {
     echo "    --lgr  <VLESS-GRPC-RLTY option>       id@host:port:svcname,d=dest.com,pub=xxxx[,shortId=abcd]"
     echo "    --lgt  <VLESS-GRPC-TLS option>        id@host:port:svcname[,s=sni.com]"
     echo "    --lsp  <VLESS-SPLT-PLN option>        id@host:port:/webpath"
-    echo "    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,s=sni.com]"
+    echo "    --lst  <VLESS-SPLT-TLS option>        id@host:port:/webpath[,s=sni.com][,alpn=h3]"
     echo "    --ltr  <VLESS-TCP-RLTY option>        id@host:port,d=dest.com,pub=xxxx[,shortId=abcd][,xtls]"
     echo "    --ltrx <VLESS-TCP-RLTY-XTLS option>   id@host:port,d=dest.com,pub=xxxx[,shortId=abcd]"
     echo "    --ltt  <VLESS-TCP-TLS option>         id@host:port[,s=sni.com][,xtls]"
@@ -58,8 +58,8 @@ while true ; do
             fi
             shift 2
             ;;
-        # Alias options
         --ltrx|--lttx)
+            # Alias options
             subcmd=`echo $1|tr -d '\-\-'|tr -d x`
             $DIR/proxy-${subcmd}.sh $2,xtls >$XCONF
             if [ $? != 0 ]; then
