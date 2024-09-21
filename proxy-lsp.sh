@@ -42,7 +42,7 @@ Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level
 Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+JstreamSettings=`jq -nc --arg path "${path}" \
 '. += {"network":"splithttp", "security":"none", "splithttpSettings":{"path":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \

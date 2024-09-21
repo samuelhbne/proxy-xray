@@ -2,7 +2,7 @@
 
 usage() {
     >&2 echo "VMESS-WS-PLAIN proxy builder"
-    >&2 echo "Usage: proxy-mpw <id@domain.com:443:/websocket>"
+    >&2 echo "Usage: proxy-mwp <id@domain.com:443:/websocket>"
 }
 
 if [ -z "$1" ]; then
@@ -45,7 +45,7 @@ Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level
 Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+JstreamSettings=`jq -nc --arg path "${path}" \
 '. += {"network":"ws", "security":"none", "wsSettings":{"path":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
