@@ -16,6 +16,13 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttx myid
 ...
 ```
 
+The following command will create a VLESS-SplitHTTP-TLS-HTTP3 client connecting to mydomain.com port 443 with given uid. Expose Socks-proxy port 1080 as a local service.
+
+```shell
+$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lst myid@mydomain.com:443:/split0,alpn=h3
+...
+```
+
 The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not been proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
 
 ```shell
