@@ -37,12 +37,15 @@ fi
 
 if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
 
+# User settings
 Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid, "encryption":"none", "level":0}'`
 
+# Vnext settings
 Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
 '. += {"address":$host, "port":($port | tonumber), "users":[$juser]}' `
 
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" \
+# Stream Settings
+JstreamSettings=`jq -nc --arg path "${path}" \
 '. += {"network":"grpc", "security":"none", "grpcSettings":{"serviceName":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \

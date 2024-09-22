@@ -62,11 +62,7 @@ Jservers=`jq -nc --arg host "${host}" --arg port "${port}" --arg passwd "${passw
 '. += {"address":$host,"port":($port | tonumber),"password":$passwd}' `
 
 # Stream Settings
-Jalpn='[]'
-for alpn in "${ALPN[@]}"
-do
-    Jalpn=`echo $Jalpn | jq -c --arg alpn "${alpn}" '. +=[$alpn]'`
-done
+Jalpn=`printf '%s\n' "${ALPN[@]}"|jq -R|jq -sc`
 JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" --argjson jalpn "${Jalpn}" \
 '. += {"network":"ws","security":"tls","tlsSettings":{"serverName":$serverName,"fingerprint":$fingerprint,"alpn":$jalpn},"wsSettings":{"path":$path}}' `
 
