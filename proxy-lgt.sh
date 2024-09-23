@@ -2,7 +2,7 @@
 
 usage() {
     >&2 echo "VLESS-GRPC-TLS proxy builder"
-    >&2 echo "Usage: proxy-lgt <id@domain.com:443:/svcpath>[,serverName=x.org][,fingerprint=safari][,alpn=h3]"
+    >&2 echo "Usage: proxy-lgt <id@domain.com:443:svcname>[,fingerprint=safari][,alpn=h3]"
 }
 
 if [ -z "$1" ]; then
