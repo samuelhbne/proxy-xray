@@ -102,45 +102,45 @@ while true ; do
             ;;
         --cn-direct)
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:apple-cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","domain":[$igndomain]}]'`
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:google-cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","domain":[$igndomain]}]'`
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:geolocation-cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","domain":[$igndomain]}]'`
             Jrules=`echo "${Jrules}" | jq --arg igndomain "geosite:cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","domain":[$igndomain]}]'`
             Jrules=`echo "${Jrules}" | jq --arg ignip "geoip:cn" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","ip":[$ignip]}]'`
             shift 1
             ;;
         --domain-direct)
             Jrules=`echo "${Jrules}" | jq --arg igndomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "domain":[$igndomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","domain":[$igndomain]}]'`
             shift 2
             ;;
         --domain-proxy)
             Jrules=`echo "${Jrules}" | jq --arg pxydomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"proxy", "domain":[$pxydomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"proxy","domain":[$pxydomain]}]'`
             shift 2
             ;;
         --domain-block)
             Jrules=`echo "${Jrules}" | jq --arg blkdomain "$2" \
-            '.rules += [{"type":"field", "outboundTag":"block", "domain":[$blkdomain]}]'`
+            '.rules += [{"type":"field","outboundTag":"block","domain":[$blkdomain]}]'`
             shift 2
             ;;
         --ip-direct)
             Jrules=`echo "${Jrules}" | jq --arg ignip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"direct", "ip":[$ignip]}]'`
+            '.rules += [{"type":"field","outboundTag":"direct","ip":[$ignip]}]'`
             shift 2
             ;;
         --ip-proxy)
             Jrules=`echo "${Jrules}" | jq --arg pxyip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"proxy", "ip":[$pxyip]}]'`
+            '.rules += [{"type":"field","outboundTag":"proxy","ip":[$pxyip]}]'`
             shift 2
             ;;
         --ip-block)
             Jrules=`echo "${Jrules}" | jq --arg blkip "$2" \
-            '.rules += [{"type":"field", "outboundTag":"block", "ip":[$blkip]}]'`
+            '.rules += [{"type":"field","outboundTag":"block","ip":[$blkip]}]'`
             shift 2
             ;;
         --rules-path)
@@ -191,15 +191,15 @@ if [ -z "${DNS}" ]; then
 fi
 
 # Add inbounds config
-JibDKDEMO=`echo '{}' | jq --arg dns "${DNS}" \
-'. +={"tag": "dns-in", "port":5353, "listen":"0.0.0.0", "protocol":"dokodemo-door", "settings":{"address": $dns, "port":53, "network":"tcp,udp"}}' `
-JibSOCKS=`echo '{}' | jq '. +={"tag": "socks", "port":1080, "listen":"0.0.0.0", "protocol":"socks", "settings":{"udp":true}}' `
-JibHTTP=`echo '{}' | jq '. +={"tag": "http", "port":8123, "listen":"0.0.0.0", "protocol":"http"}' `
+JibDKDEMO=`jq -nc --arg dns "${DNS}" \
+'. +={"tag":"dns-in","port":5353,"listen":"0.0.0.0","protocol":"dokodemo-door","settings":{"address":$dns,"port":53,"network":"tcp,udp"}}' `
+JibSOCKS=`jq -nc '. +={"tag":"socks","port":1080,"listen":"0.0.0.0","protocol":"socks","settings":{"udp":true}}' `
+JibHTTP=`jq -nc '. +={"tag":"http","port":8123,"listen":"0.0.0.0","protocol":"http"}' `
 cat $XCONF| jq --argjson jibdkdemo "${JibDKDEMO}" --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
 '. += {"inbounds":[$jibdkdemo, $jibsocks, $jibhttp]}' | sponge $XCONF
 
 # Add routing config
-Jrouting='{"routing": {"domainStrategy":"AsIs"}}'
+Jrouting='{"routing":{"domainStrategy":"AsIs"}}'
 Jrouting=`echo "${Jrouting}" |jq --argjson jrules "${Jrules}" '.routing += $jrules'`
 cat $XCONF| jq --argjson jrouting "${Jrouting}" '. += $jrouting' | sponge $XCONF
 

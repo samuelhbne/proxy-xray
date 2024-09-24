@@ -49,9 +49,9 @@ case "${PROTOCOL}" in
         WPATH=`cat $XCONF | jq -r '.outbounds[0].streamSettings.wsSettings.path'`
         UUID=`cat $XCONF | jq -r '.outbounds[0].settings.vnext[0].users[0].id'`
         XNETWORK=`cat $XCONF | jq -r '.outbounds[0].streamSettings.network'`
-        JXURL=`echo '{}' |jq --arg xhost "${XHOST}" --arg xport "${XPORT}" '. += {"v":2, "add":$xhost, "port":$xport}' `
-        JXURL=`echo ${JXURL} | jq --arg uuid "${UUID}" --arg network "${XNETWORK}" '. += {"id":$uuid, "net":$network}' `
-        JXURL=`echo ${JXURL} | jq '. += {"scy":"auto", "tls":"tls"}' `
+        JXURL=`echo '{}' |jq --arg xhost "${XHOST}" --arg xport "${XPORT}" '. += {"v":2,"add":$xhost,"port":$xport}' `
+        JXURL=`echo ${JXURL} | jq --arg uuid "${UUID}" --arg network "${XNETWORK}" '. += {"id":$uuid,"net":$network}' `
+        JXURL=`echo ${JXURL} | jq '. += {"scy":"auto","tls":"tls"}' `
         if [ "${WPATH}" != "null" ]; then
             JXURL=`echo ${JXURL} | jq --arg wpath "${WPATH}" '. += {"path":$wpath}' `
         fi

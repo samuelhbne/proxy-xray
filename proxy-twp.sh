@@ -40,19 +40,19 @@ if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be
 
 # User settings
 Jservers=`jq -nc --arg host "${host}" --arg port "${port}" --arg passwd "${passwd}" \
-'. += {"address":$host, "port":($port | tonumber), "password":$passwd}' `
+'. += {"address":$host,"port":($port | tonumber),"password":$passwd}' `
 
 # Stream Settings
 JstreamSettings=`jq -nc --arg path "${path}" \
-'. += {"network":"ws", "security":"none", "wsSettings":{"path":$path}}' `
+'. += {"network":"ws","security":"none","wsSettings":{"path":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jservers "${Jservers}" --argjson jstreamSettings "${JstreamSettings}" \
-'. += { "tag": "proxy", "protocol":"trojan", "settings":{"servers":[$jservers]}, "streamSettings":$jstreamSettings }' `
-Jdirect='{"tag": "direct", "protocol": "freedom", "settings": {}}'
-Jblocked='{"tag": "blocked", "protocol": "blackhole", "settings": {}}'
+'. += { "tag":"proxy","protocol":"trojan","settings":{"servers":[$jservers]},"streamSettings":$jstreamSettings}' `
+Jdirect='{"tag":"direct","protocol":"freedom","settings":{}}'
+Jblocked='{"tag":"blocked","protocol":"blackhole","settings":{}}'
 
 jroot=`jq -n --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
-'. += {"log":{"loglevel":"warning"}, "outbounds":[$jproxy, $jdirect, $jblocked]}' `
+'. += {"log":{"loglevel":"warning"},"outbounds":[$jproxy,$jdirect,$jblocked]}' `
 
 echo "$jroot"
 exit 0
