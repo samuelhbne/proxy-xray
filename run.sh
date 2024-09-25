@@ -173,7 +173,7 @@ Jroot=`echo $Jroot|jq --argjson JibDNS "${JibDNS}" --argjson JibSOCKS "${JibSOCK
 # Add routing config
 Jrouting='{"routing":{"domainStrategy":"AsIs"}}'
 Jrouting=`echo "${Jrouting}" |jq --argjson Jrules "${Jrules}" '.routing += $Jrules'`
-Jroot=`echo $Jroot|jq --argjson Jrouting "${Jrouting}" '.routing += $Jrouting'`
+Jroot=`echo $Jroot|jq --argjson Jrouting "${Jrouting}" '. += $Jrouting'`
 
 # Add debug config
 if [ -n "${DEBUG}" ]; then loglevel="debug"; else loglevel="warning"; fi
