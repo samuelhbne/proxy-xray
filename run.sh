@@ -26,7 +26,7 @@ usage() {
     echo "    --twt  <TROJAN-WS-TLS option>         password@host:port:/wspath"
     echo "    -d|--debug                            Start in debug mode with verbose output"
     echo "    -i|--stdin                            Read config from stdin instead of auto generation"
-    echo "    -j|--json                             Json snippet to merge into the config. Say '{"log":{"loglevel":"info"}'"
+    echo "    -j|--json                             Json snippet to merge into the config. Say '{"log":{"loglevel":"info"}}'"
     echo "    --dns  <upstream-DNS-ip>              Designated upstream DNS server IP, 1.1.1.1 will be applied by default"
 #   echo "    --dns-local <local-conf-file>         Enable designated domain conf file. Like apple.china.conf"
     echo "    --dns-local-cn                        Enable China-accessible domains to be resolved in China"
@@ -50,39 +50,20 @@ while true ; do
     case "$1" in
         --lgp|--lgr|--lgt|--lsp|--lst|--ltr|--ltt|--lwp|--lwt|--mtt|--mwp|--mwt|--ttt|--twp|--twt)
             subcmd=`echo "$1"|tr -d "\-\-"`
-            $DIR/proxy-${subcmd}.sh $2 >$XCONF
-            if [ $? != 0 ]; then
-                echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
-                exit 2
-            else
-                XRAYCFG=1
-            fi
+            PXCMD="$DIR/proxy-${subcmd}.sh $2"
             shift 2
             ;;
         --ltrx|--lttx)
             # Alias of --ltr|ltt options
             subcmd=`echo $1|tr -d '\-\-'|tr -d x`
-            $DIR/proxy-${subcmd}.sh $2,xtls >$XCONF
-            if [ $? != 0 ]; then
-                echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
-                exit 2
-            else
-                XRAYCFG=1
-            fi
+            PXCMD="$DIR/proxy-${subcmd}.sh $2,xtls"
             shift 2
             ;;
         --lst3)
             # Alias of --lst options
             # splitHTTP is the only option for H3 support from Xray-Core so far.
             subcmd=`echo $1|tr -d '\-\-'|tr -d 3`
-            echo $subcmd
-            $DIR/proxy-${subcmd}.sh $2,alpn=h3 >$XCONF
-            if [ $? != 0 ]; then
-                echo "${subcmd} Config failed: $DIR/proxy-${subcmd}.sh $2"
-                exit 2
-            else
-                XRAYCFG=1
-            fi
+            PXCMD="$DIR/proxy-${subcmd}.sh $2,alpn=h3"
             shift 2
             ;;
         --dns)
@@ -152,8 +133,7 @@ while true ; do
             shift 2
             ;;
         -i|--stdin)
-            STDINCONF=1
-            XRAYCFG=1
+            exec /usr/local/bin/xray
             shift 1
             ;;
         -d|--debug)
@@ -171,10 +151,42 @@ while true ; do
     esac
 done
 
-if [ "${XRAYCFG}" != "1" ]; then
-    echo "Missing Xray connection option"
-    usage
-    exit 1
+if [ -z "${PXCMD}" ]; then >&2 echo -e "Missing Xray connection option.\n"; usage; exit 1; fi
+
+# Init root config
+Jroot='{"outbounds":[{"tag":"direct","protocol":"freedom"},{"tag":"blocked","protocol":"blackhole"}]}'
+
+# Add outbounds config
+Joutbound=`$PXCMD`
+if [ $? != 0 ]; then >&2 echo -e "${subcmd} Config failed: $PXCMD\n"; exit 2; fi
+Jroot=`echo $Jroot|jq --argjson Joutbound "${Joutbound}" '.outbounds += [$Joutbound]'`
+
+# Add inbounds config
+if [ -z "${DNS}" ]; then DNS="1.1.1.1"; fi
+JibDNS=`jq -nc --arg dns "${DNS}" \
+'. +={"tag":"dns-in","port":5353,"listen":"0.0.0.0","protocol":"dokodemo-door","settings":{"address":$dns,"port":53,"network":"tcp,udp"}}'`
+JibSOCKS=`jq -nc '. +={"tag":"socks","port":1080,"listen":"0.0.0.0","protocol":"socks","settings":{"udp":true}}'`
+JibHTTP=`jq -nc '. +={"tag":"http","port":8123,"listen":"0.0.0.0","protocol":"http"}'`
+Jroot=`echo $Jroot|jq --argjson JibDNS "${JibDNS}" --argjson JibSOCKS "${JibSOCKS}" --argjson JibHTTP "${JibHTTP}" \
+'.inbounds += [$JibDNS,$JibSOCKS,$JibHTTP]'`
+
+# Add routing config
+Jrouting='{"routing":{"domainStrategy":"AsIs"}}'
+Jrouting=`echo "${Jrouting}" |jq --argjson jrules "${Jrules}" '.routing += $jrules'`
+Jroot=`echo $Jroot|jq --argjson Jrouting "${Jrouting}" '.routing += $Jrouting'`
+
+# Add debug config
+if [ -n "${DEBUG}" ]; then loglevel="debug"; else loglevel="warning"; fi
+Jroot=`echo $Jroot| jq --arg loglevel "${loglevel}" '.log.loglevel |= $loglevel'`
+
+# Merge injected json config
+if [ -n "${INJECT}" ]; then
+    for JSON_IN in "${INJECT[@]}"
+    do
+        Jmerge=`jq -nc "${JSON_IN}"`
+        if [[ $? -ne 0 ]]; then echo "Invalid json ${JSON_IN}"; exit 1; fi
+        Jroot=`jq -n --argjson Jroot "${Jroot}" --argjson Jmerge "${Jmerge}" '$Jroot + $Jmerge'`
+    done
 fi
 
 if [ -n "${DNSLOCAL}" ]; then
@@ -186,43 +198,6 @@ fi
 echo -e "no-resolv\nserver=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
 /usr/sbin/dnsmasq
 
-if [ -z "${DNS}" ]; then
-    DNS="1.1.1.1"
-fi
-
-# Add inbounds config
-JibDKDEMO=`jq -nc --arg dns "${DNS}" \
-'. +={"tag":"dns-in","port":5353,"listen":"0.0.0.0","protocol":"dokodemo-door","settings":{"address":$dns,"port":53,"network":"tcp,udp"}}' `
-JibSOCKS=`jq -nc '. +={"tag":"socks","port":1080,"listen":"0.0.0.0","protocol":"socks","settings":{"udp":true}}' `
-JibHTTP=`jq -nc '. +={"tag":"http","port":8123,"listen":"0.0.0.0","protocol":"http"}' `
-cat $XCONF| jq --argjson jibdkdemo "${JibDKDEMO}" --argjson jibsocks "${JibSOCKS}" --argjson jibhttp "${JibHTTP}" \
-'. += {"inbounds":[$jibdkdemo, $jibsocks, $jibhttp]}' | sponge $XCONF
-
-# Add routing config
-Jrouting='{"routing":{"domainStrategy":"AsIs"}}'
-Jrouting=`echo "${Jrouting}" |jq --argjson jrules "${Jrules}" '.routing += $jrules'`
-cat $XCONF| jq --argjson jrouting "${Jrouting}" '. += $jrouting' | sponge $XCONF
-
-if [ "${STDINCONF}" = "1" ]; then
-    exec /usr/local/bin/xray
-fi
-
-if [ "${DEBUG}" = "1" ]; then
-    cat $XCONF |jq '.log.loglevel |="debug"' | sponge $XCONF
-    cat $XCONF
-fi
-
-    if [ -n "${INJECT}" ]; then
-        for JSON_IN in "${INJECT[@]}"
-        do
-            echo "${JSON_IN}"|jq -ec >/tmp/merge.json
-            if [[ $? -ne 0 ]]; then
-                echo "Invalid json ${JSON_IN}"
-                exit 1
-            fi
-            jq -s '.[0] * .[1]' $XCONF /tmp/merge.json |sponge $XCONF
-        done
-    fi
-
+jq -n "$Jroot"
+jq -n "$Jroot">$XCONF
 exec /usr/local/bin/xray -c $XCONF
-

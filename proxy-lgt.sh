@@ -1,14 +1,13 @@
 #!/bin/bash
 
 usage() {
-    >&2 echo "VLESS-GRPC-TLS proxy builder"
-    >&2 echo "Usage: proxy-lgt <id@domain.com:443:svcname>[,fingerprint=safari][,alpn=h3]"
+    >&2 echo -e "VLESS-GRPC-TLS proxy builder"
+    >&2 echo -e "Usage: proxy-lgt <id@domain.com:443:svcname>[,fingerprint=safari][,alpn=h3]"
 }
 
 if [ -z "$1" ]; then
-    >&2 echo "Missing options"
-    usage
-    exit 1
+    >&2 echo -e "Missing command options.\n"
+    usage; exit 1
 fi
 
 # id@domain.com:443:/svcpath,fingerprint=safari
@@ -38,43 +37,28 @@ path="${options[2]}"
 
 if [ -z "${fingerprint}" ]; then fingerprint="safari"; fi
 
-if [ -z "${id}" ]; then
-    >&2 echo "Error: id undefined."
-    usage
-    exit 1
-fi
+if [ -z "${id}" ]; then >&2 echo -e "Error: id undefined.\n"; usage; exit 1; fi
 
-if [ -z "${host}" ]; then
-    >&2 echo "Error: destination host undefined."
-    usage
-    exit 1
-fi
+if [ -z "${host}" ]; then >&2 echo -e "Error: destination host undefined.\n"; usage; exit 1; fi
 
-if [ -z "${port}" ]; then
-    port=443
-fi
+if [ -z "${port}" ]; then port=443; fi
 
-if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo "Port number must be numeric"; exit 1; fi
+if ! [ "${port}" -eq "${port}" ] 2>/dev/null; then >&2 echo -e "Port number must be numeric.\n"; exit 1; fi
 
 # User settings
 Jusers=`jq -nc --arg uuid "${id}" '. += {"id":$uuid,"encryption":"none","level":0}'`
 
 # Vnext settings
 Jvnext=`jq -nc --arg host "${host}" --arg port "${port}" --argjson juser "${Jusers}" \
-'. += {"address":$host,"port":($port | tonumber),"users":[$juser]}' `
+'. += {"address":$host,"port":($port|tonumber),"users":[$juser]}' `
 
 # Stream Settings
 Jalpn=`printf '%s\n' "${ALPN[@]}"|jq -R|jq -sc`
-JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" --argjson jalpn "${Jalpn}" \
-'. += {"network":"grpc","security":"tls","tlsSettings":{"serverName":$serverName,"fingerprint":$fingerprint,"alpn":$jalpn},"grpcSettings":{"serviceName":$path}}' `
+JstreamSettings=`jq -nc --arg serverName "${serverName}" --arg fingerprint "${fingerprint}" --arg path "${path}" --argjson Jalpn "${Jalpn}" \
+'. += {"network":"grpc","security":"tls","tlsSettings":{"serverName":$serverName,"fingerprint":$fingerprint,"alpn":$Jalpn},"grpcSettings":{"serviceName":$path}}' `
 
 Jproxy=`jq -nc --arg host "${host}" --argjson jvnext "${Jvnext}" --argjson jstreamSettings "${JstreamSettings}" \
 '. += { "tag":"proxy","protocol":"vless","settings":{"vnext":[$jvnext]},"streamSettings":$jstreamSettings}' `
-Jdirect='{"tag":"direct","protocol":"freedom","settings":{}}'
-Jblocked='{"tag":"blocked","protocol":"blackhole","settings":{}}'
 
-jroot=`jq -n --argjson jproxy "${Jproxy}" --argjson jdirect "${Jdirect}" --argjson jblocked "${Jblocked}" \
-'. += {"log":{"loglevel":"warning"},"outbounds":[$jproxy,$jdirect,$jblocked]}' `
-
-echo "$jroot"
+echo "$Jproxy"
 exit 0
