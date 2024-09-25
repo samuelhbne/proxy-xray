@@ -153,13 +153,12 @@ done
 
 if [ -z "${PXCMD}" ]; then >&2 echo -e "Missing Xray connection option.\n"; usage; exit 1; fi
 
-# Init root config
-Jroot='{"outbounds":[{"tag":"direct","protocol":"freedom"},{"tag":"blocked","protocol":"blackhole"}]}'
-
 # Add outbounds config
 Joutbound=`$PXCMD`
 if [ $? != 0 ]; then >&2 echo -e "${subcmd} Config failed: $PXCMD\n"; exit 2; fi
-Jroot=`echo $Jroot|jq --argjson Joutbound "${Joutbound}" '.outbounds += [$Joutbound]'`
+# First outbound will be the DEFAULT outbound
+Jroot=`jq -nc --argjson Joutbound "${Joutbound}" '.outbounds += [$Joutbound]'`
+Jroot=`echo $Jroot|jq '.outbounds += [{"tag":"direct","protocol":"freedom"},{"tag":"blocked","protocol":"blackhole"}]'`
 
 # Add inbounds config
 if [ -z "${DNS}" ]; then DNS="1.1.1.1"; fi
