@@ -1,6 +1,7 @@
 name: docker-buildx-dev
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev

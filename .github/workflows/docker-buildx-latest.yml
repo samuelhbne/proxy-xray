@@ -1,6 +1,7 @@
 name: docker-buildx-latest
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
