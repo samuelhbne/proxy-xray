@@ -71,10 +71,10 @@ ADD proxy-ttt.sh    /proxy-ttt.sh
 ADD proxy-twp.sh    /proxy-twp.sh
 ADD proxy-twt.sh    /proxy-twt.sh
 
-ADD status.sh       /status
+ADD qrcode.sh       /qrcode
 ADD run.sh          /run.sh
 
 RUN chmod 755 /*.sh
-RUN chmod 755 /status
+RUN chmod 755 /qrcode
 
 ENTRYPOINT ["/run.sh"]

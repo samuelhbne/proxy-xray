@@ -12,22 +12,22 @@ Please have a look over the sibling project [server-xray](https://github.com/sam
 The following command will create a VLESS-TCP-TLS-XTLS client connecting to mydomain.com  port 443 with given uid. Expose Socks-proxy port 1080 as a local service.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lttx myid@mydomain.com:443
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray --lttx myid@mydomain.com:443
 ...
 ```
 
 The following command will create a VLESS-SplitHTTP-TLS-HTTP3 client connecting to mydomain.com port 443 with given uid and webpath. Expose Socks-proxy port 1080 as a local service.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray --lst3 myid@mydomain.com:443:/split0
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray --lst3 myid@mydomain.com:443:/split0
 ...
 ```
 
 The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not been proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
--d samuelhbne/proxy-xray --cn-direct --dns-local-cn \
+$ docker run --name proxy-xray --rm -it -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
+samuelhbne/proxy-xray --cn-direct --dns-local-cn \
 --ltrx myid@mydomain.com:443,d=yahoo.com,pub=qAaJnTE_zYWNuXuIdlpIfSt5beveuV4PyBaP76WE7jU
 ...
 ```
@@ -66,13 +66,19 @@ OrgId:          TWITT
 
 ## How to get the XRay QR code for mobile connection
 
+proxy-xray always display the QR code after the successful config file generation.
+
 ```shell
-$ docker exec -t proxy-xray /status
-VPS-Server: mydomain.duckdns.org
-Xray-URL: vless://myid@mydomain.duckdns.org:443?security=xtls&type=tcp&flow=xtls-rprx-direct#mydomain.duckdns.org:443
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray --ltt myid@mydomain.com
 ```
 
-![QR code example](https://github.com/samuelhbne/proxy-xray/blob/master/images/qr-xray4.png)
+<img src="./images/cli.png" alt="CLI example" width="640"/>
+
+Also, you can always retrive the QR code as following in case you ran the container in daemon mode hence did not get it from the console output.
+
+```shell
+$ docker exec -t proxy-xray /qrcode
+```
 
 ## Full usage
 
@@ -128,7 +134,7 @@ $ docker rm proxy-xray
 The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All destination sites and IP located in China will not been proxied.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy-xray \
+$ docker run --name proxy-xray --rm -it -p 1080:1080 -p 1080:1080/udp samuelhbne/proxy-xray \
 --lttx myid@12.34.56.78:443,serverName=mydomain.duckdns.org --cn-direct
 ```
 
@@ -137,7 +143,7 @@ $ docker run --name proxy-xray -p 1080:1080 -p 1080:1080/udp -d samuelhbne/proxy
 The following instruction connect to Xray server port 443 in Vless+TCP+TLS+Websocket mode with given id. All apple-cn sites will be proxied. All sites located in China will not be proxied.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray \
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray \
 --lwt myid@mydomain.duckdns.org:443:/websocket \
 --domain-proxy geosite:apple-cn --domain-direct geosite:geolocation-cn
 ```
@@ -147,7 +153,7 @@ $ docker run --name proxy-xray -p 1080:1080 -d samuelhbne/proxy-xray \
 The following instruction connect to Xray server port 443 in Vless-gRPC-TLS mode with given password. All sites not located in China will be proxied. You need to escape '!' character in --domain-proxy parameter to be accepted by shell.
 
 ```shell
-$ docker run --name proxy-xray -p 1080:1080 samuelhbne/proxy-xray \
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray \
 --lgt myid@mydomain.duckdns.org:443:gsvc --domain-proxy geosite:geolocation-\!cn
 ```
 
@@ -161,7 +167,7 @@ $ cd /tmp/rules
 $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 $ wget -c -t3 -T30 https://github.com/SamadiPour/iran-hosted-domains/releases/download/202108210015/iran.dat
-$ docker run --name proxy-xray -p 1080:1080 -v /tmp/rules:/opt/rules -d samuelhbne/proxy-xray \
+$ docker run --name proxy-xray --rm -it -p 1080:1080 -v /tmp/rules:/opt/rules samuelhbne/proxy-xray \
 --ttt trojan_pass@mydomain.duckdns.org:8443 \
 --rules-path /opt/rules --domain-direct ext:iran.dat:ir --ip-direct geoip:ir
 ```
@@ -171,7 +177,7 @@ $ docker run --name proxy-xray -p 1080:1080 -v /tmp/rules:/opt/rules -d samuelhb
 The following instruction start proxy-xray in debug mode. Output Xray config file generated and the Xray log to console for connection diagnosis.
 
 ```shell
-$ docker run --rm -p 1080:1080 samuelhbne/proxy-xray \
+$ docker run --rm -it -p 1080:1080 samuelhbne/proxy-xray \
 --mwt myid@mydomain.duckdns.org:443:/websocket --debug
 ```
 

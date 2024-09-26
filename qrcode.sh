@@ -77,7 +77,7 @@ case "${PROTOCOL}" in
         ;;
 esac
 
-echo "VPS-Server: ${XHOST}"
+#echo "VPS-Server: ${XHOST}"
 echo "Xray-URL: ${XURL}"
 qrencode -m 2 -t ANSIUTF8 "${XURL}"
 exit 0

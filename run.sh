@@ -156,7 +156,7 @@ if [ -z "${PXCMD}" ]; then >&2 echo -e "Missing Xray connection option.\n"; usag
 # Add outbounds config
 Joutbound=`$PXCMD`
 if [ $? != 0 ]; then >&2 echo -e "${subcmd} Config failed: $PXCMD\n"; exit 2; fi
-# First outbound will be the DEFAULT outbound
+# First outbound will be the DEFAULT
 Jroot=`jq -nc --argjson Joutbound "${Joutbound}" '.outbounds += [$Joutbound]'`
 Jroot=`echo $Jroot|jq '.outbounds += [{"tag":"direct","protocol":"freedom"},{"tag":"blocked","protocol":"blackhole"}]'`
 
@@ -200,4 +200,5 @@ echo -e "no-resolv\nserver=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
 
 jq -n "$Jroot"
 jq -n "$Jroot">$XCONF
+/qrcode
 exec /usr/local/bin/xray -c $XCONF
