@@ -1,0 +1,32 @@
+name: Trivy-scanning
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - dev
+
+jobs:
+  Trivy-Scan:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      -
+        name: Run Trivy fs vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          #severity: 'CRITICAL'
+      -
+        name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
