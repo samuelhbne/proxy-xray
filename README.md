@@ -159,17 +159,17 @@ $ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray \
 
 ### 4. Connect to TCP-Trojan-TLS server
 
-The following instruction connect to Xray server port 443 in TCP-Trojan-TLS mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directly.
+The following instruction connect to Xray server port 443 in TCP-Trojan-TLS mode with given password; Update geosite and geoip rule dat files; All sites and IPs located in Iran will be connected directly. All Iran-related domains that are blocked inside of iran will be proxied.
 
 ```shell
 $ mkdir -p /tmp/rules
 $ cd /tmp/rules
 $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 $ wget -c -t3 -T30 https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
-$ wget -c -t3 -T30 https://github.com/SamadiPour/iran-hosted-domains/releases/download/202108210015/iran.dat
+$ wget -c -t3 -T30 https://github.com/SamadiPour/iran-hosted-domains/releases/download/202409300035/iran.dat
 $ docker run --name proxy-xray --rm -it -p 1080:1080 -v /tmp/rules:/opt/rules samuelhbne/proxy-xray \
 --ttt trojan_pass@mydomain.duckdns.org:8443 \
---rules-path /opt/rules --domain-direct ext:iran.dat:ir --ip-direct geoip:ir
+--rules-path /opt/rules --domain-direct ext:iran.dat:ir --ip-direct geoip:ir --domain-proxy ext:iran.dat:proxy
 ```
 
 ### 5. Start proxy-xray container in debug mode for for connection issue diagnosis
