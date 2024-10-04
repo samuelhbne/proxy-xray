@@ -7,6 +7,7 @@ on:
       - master
     paths-ignore:
       - '**/*.md'
+      - '.github/**'
 
 jobs:
   multi-arch-latest:
