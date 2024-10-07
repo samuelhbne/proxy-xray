@@ -27,7 +27,7 @@ The following command will create a VLESS-TCP-REALITY-XTLS client connecting to 
 
 ```shell
 $ docker run --rm -it -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
-samuelhbne/proxy-xray --cn-direct --dns-local-cn \
+--name proxy-xray samuelhbne/proxy-xray --cn-direct --dns-local-cn \
 --ltrx myid@mydomain.com:443,d=yahoo.com,pub=qAaJnTE_zYWNuXuIdlpIfSt5beveuV4PyBaP76WE7jU
 ...
 ```
@@ -69,7 +69,7 @@ OrgId:          TWITT
 proxy-xray always display the QR code after the successful config file generation.
 
 ```shell
-$ docker run --rm -it -p 1080:1080 samuelhbne/proxy-xray --ltt myid@mydomain.com
+$ docker run --name proxy-xray --rm -it -p 1080:1080 samuelhbne/proxy-xray --ltt myid@mydomain.com
 ```
 
 <img src="./images/cli.png" alt="CLI example" width="640"/>
