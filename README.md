@@ -23,7 +23,7 @@ $ docker run --rm -it -p 1080:1080 samuelhbne/proxy-xray --lst3 myid@mydomain.co
 ...
 ```
 
-The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not been proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
+The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not be proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
 
 ```shell
 $ docker run --rm -it -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
@@ -130,7 +130,7 @@ $ docker rm proxy-1080
 
 ### 1. Connect to Vless-TCP-TLS-XTLS server
 
-The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All destination sites and IP located in China will not been proxied.
+The following instruction connect to mydomain.duckdns.org port 443 in Vless+TCP+XTLS mode. Connection made via IP address to avoid DNS contamination. TLS servername provided via parameter. All destination sites and IP located in China will not be proxied.
 
 ```shell
 $ docker run --rm -it -p 1080:1080 -p 1080:1080/udp samuelhbne/proxy-xray \
