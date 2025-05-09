@@ -206,12 +206,12 @@ docker buildx build --platform=linux/amd64 --output type=docker -t samuelhbne/pr
 
 ## Credits
 
-Thanks to [RPRX](https://github.com/RPRX) for the [Xray-core](https://github.com/XTLS/Xray-core) project.
+Thanks to [RPRX](https://github.com/RPRX) for [Xray-core](https://github.com/XTLS/Xray-core).
 
-Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for the [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) project.
+Thanks to [Loyalsoldier](https://github.com/Loyalsoldier) for [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat).
 
-Thanks to [felixonmars](https://github.com/felixonmars) for the [dnsmasq-china-list](https://github.com/felixonmars/dnsmasq-china-list) project.
+Thanks to [felixonmars](https://github.com/felixonmars) for [dnsmasq-china-list](https://github.com/felixonmars/dnsmasq-china-list).
 
-Thanks to [SamadiPour](https://github.com/SamadiPour) for the [iran-hosted-domains](https://github.com/SamadiPour/iran-hosted-domains) project.
+Thanks to [SamadiPour](https://github.com/SamadiPour) for [iran-hosted-domains](https://github.com/SamadiPour/iran-hosted-domains).
 
-Thanks to [FUKUCHI Kentaro](https://fukuchi.org/index.html.en) for the [libqrencode](https://fukuchi.org/works/qrencode/) project.
+Thanks to [FUKUCHI Kentaro](https://fukuchi.org/index.html.en) for [libqrencode](https://fukuchi.org/works/qrencode/).
