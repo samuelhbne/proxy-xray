@@ -1,7 +1,6 @@
-FROM golang:1.23-alpine3.20 AS builder
+FROM golang:1.24-alpine3.20 AS builder
 
-ARG XRAY_VER='v25.1.30'
-ARG QREC_VER='4.1.1'
+ARG XRAY_VER='v25.4.30'
 
 RUN apk add --no-cache bash git build-base curl
 
@@ -18,15 +17,6 @@ RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
-WORKDIR /tmp
-RUN curl -sSLO https://fukuchi.org/works/qrencode/qrencode-${QREC_VER}.tar.gz && \
-    tar xvf qrencode-${QREC_VER}.tar.gz
-WORKDIR /tmp/qrencode-${QREC_VER}
-RUN ./configure --without-png && make install
-
-WORKDIR /usr/local
-RUN tar zcvf /tmp/qrencode.tar.gz bin lib share
-
 
 FROM alpine:3.20
 
@@ -41,13 +31,8 @@ COPY --from=builder /go/src/XTLS/Xray-core/google.china.conf                /etc
 COPY --from=builder /go/src/XTLS/Xray-core/bogus-nxdomain.china.conf        /etc/dnsmasq.disable/
 COPY --from=builder /go/src/XTLS/Xray-core/accelerated-domains.china.conf   /etc/dnsmasq.disable/
 
-COPY --from=builder /tmp/qrencode.tar.gz /tmp/
-WORKDIR /usr/local
-RUN tar xvf /tmp/qrencode.tar.gz
-RUN rm /tmp/qrencode.tar.gz
-
 RUN apk --no-cache add bash openssl curl jq moreutils \
-    whois dnsmasq ca-certificates proxychains-ng
+    whois dnsmasq ca-certificates proxychains-ng libqrencode-tools
 
 RUN sed -i "s/^socks4.*/socks5\t127.0.0.1 1080/g" /etc/proxychains/proxychains.conf
 
