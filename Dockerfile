@@ -1,6 +1,6 @@
 FROM golang:1.24-alpine3.20 AS builder
 
-ARG XRAY_VER='v25.4.30'
+ARG XRAY_VER='v25.6.8'
 
 RUN apk add --no-cache bash git build-base curl
 
@@ -9,10 +9,10 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
     git checkout ${XRAY_VER} && \
     go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 
-RUN curl -sSLO  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
-RUN curl -sSLO  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+RUN curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+RUN curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 
-RUN curl -sSLO  https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
+RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/bogus-nxdomain.china.conf
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
