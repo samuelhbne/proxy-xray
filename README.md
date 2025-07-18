@@ -166,6 +166,9 @@ $ docker run --rm -it -p 1080:1080 samuelhbne/proxy-xray \
 --domain-direct ext:iran.dat:ir --ip-direct geoip:ir --domain-proxy ext:iran.dat:proxy
 ```
 
+Please refer the following for further details about the usage of iran.dat
+https://bootmortis.github.io/iran-hosted-domains/#/
+
 #### In case you need to run proxy-xray with updated geosite/geoip dat files.
 
 ```shell
