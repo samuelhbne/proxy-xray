@@ -11,6 +11,7 @@ RUN git clone https://github.com/XTLS/Xray-core.git . && \
 
 RUN curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 RUN curl -sSLO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+RUN curl -sSLO https://github.com/bootmortis/iran-hosted-domains/releases/download/202507140045/iran.dat
 
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf
@@ -23,6 +24,7 @@ FROM alpine:3.20
 COPY --from=builder /go/src/XTLS/Xray-core/xray         /usr/local/bin/
 COPY --from=builder /go/src/XTLS/Xray-core/geosite.dat  /usr/local/bin/
 COPY --from=builder /go/src/XTLS/Xray-core/geoip.dat    /usr/local/bin/
+COPY --from=builder /go/src/XTLS/Xray-core/iran.dat     /usr/local/bin/
 
 RUN mkdir -p /etc/dnsmasq.disable
 
