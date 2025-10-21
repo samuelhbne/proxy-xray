@@ -1,6 +1,6 @@
-FROM golang:1.24-alpine3.20 AS builder
+FROM golang:1.25-alpine3.22 AS builder
 
-ARG XRAY_VER='v25.6.8'
+ARG XRAY_VER='v25.10.15'
 
 RUN apk add --no-cache bash git build-base curl
 
@@ -19,7 +19,7 @@ RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/
 RUN curl -sSLO https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
 
 
-FROM alpine:3.20
+FROM alpine:3.22
 
 COPY --from=builder /go/src/XTLS/Xray-core/xray         /usr/local/bin/
 COPY --from=builder /go/src/XTLS/Xray-core/geosite.dat  /usr/local/bin/
