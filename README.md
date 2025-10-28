@@ -23,7 +23,7 @@ $ docker run --rm -it -p 1080:1080 samuelhbne/proxy-xray --lst3 myid@mydomain.co
 ...
 ```
 
-The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not be proxied. China-accessible domains will be resolved locally hence to accelerate the local access.
+The following command will create a VLESS-TCP-REALITY-XTLS client connecting to mydomain.com port 443 with given uid, applying yahoo.com as fake destnation, applying public key from "pub" parameter, exposing Socks-proxy port 1080, http-proxy port 8123, DNS port 53 as local services. Websites and IP located in China will not be proxied. China-accessible domains will be resolved to local hence to accelerate the local domain access.
 
 ```shell
 $ docker run --rm -it -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
@@ -34,7 +34,7 @@ $ docker run --rm -it -p 1080:1080 -p 1080:1080/udp -p 8123:8123 -p 53:53/udp \
 
 ** NOTE **
 
-Name query for sites outside China like twitter.com will be always forwarded to designated DNS (1.1.1.1 by default) to avoid the contaminated results. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise all queries will be forwarded to designated DNS server.
+Name query for sites outside China like twitter.com will be always forwarded to designated DNS (1.1.1.1 by default) to avoid contaminated results. Name query for sites inside China like apple.com.cn will be forwarded to local DNS servers in China to avoid cross region slow access when "--dns-local-cn" options applied. Otherwise all queries will be forwarded to designated DNS server.
 
 ## How to verify if proxy tunnel is working properly
 
