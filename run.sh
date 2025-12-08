@@ -196,6 +196,8 @@ if [ -n "${DNSLOCAL}" ]; then
     done
 fi
 echo -e "no-resolv\nserver=127.0.0.1#5353" >/etc/dnsmasq.d/upstream.conf
+# Enable external DNS service instead of sereve localy
+sed -i 's/^[[:space:]]*local-service/# &/' /etc/dnsmasq.conf
 /usr/sbin/dnsmasq
 
 jq -n "$Jroot"
