@@ -1,6 +1,6 @@
 FROM golang:1.26-alpine3.23 AS builder
 
-ARG XRAYVER='v26.3.27'
+ARG XRAY_VER='v26.3.27'
 
 RUN apk add --no-cache bash git build-base curl
 
